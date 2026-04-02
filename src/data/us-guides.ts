@@ -470,4 +470,483 @@ Not all states require them. Those that do include:
 
 DocketPack generates food safety training tracking documents, certification record templates, and a renewal schedule customized to your state's requirements. The training log format is designed for easy reference during health inspections and includes fields for both manager certifications and food handler cards.`,
   },
+  {
+    slug: "restaurant-insurance-requirements",
+    title: "Restaurant Insurance Requirements: What Coverage You Actually Need",
+    description:
+      "A practical guide to the insurance policies every US restaurant needs — what's legally required, what's strongly recommended, and what you can skip.",
+    seoTitle:
+      "Restaurant Insurance Requirements — What Coverage You Need in 2026",
+    seoDescription:
+      "Complete guide to restaurant insurance: general liability, workers' comp, liquor liability, property, and more. What's required vs recommended by state.",
+    industry: "restaurant",
+    region: "us",
+    content: `## Why restaurant insurance is non-negotiable
+
+Restaurants face more liability exposure than almost any other small business. Customers slip on wet floors, employees burn themselves on grills, a diner has an allergic reaction, a delivery driver hits a pedestrian. Without proper coverage, a single incident can bankrupt the business.
+
+Some insurance is legally required. Some is required by your landlord or lender. Some is just smart business. This guide breaks down what you actually need.
+
+## Legally required insurance
+
+### Workers' compensation insurance
+Required in 49 states (Texas is the exception, where it's optional for private employers). Workers' comp covers medical expenses and lost wages when employees are injured on the job.
+
+- **Who it covers**: All employees, including part-time and seasonal
+- **Typical cost**: $0.75–$2.50 per $100 of payroll for restaurant workers
+- **Penalty for non-compliance**: Fines of $1,000–$100,000+ depending on state; criminal charges in some states; personal liability for all employee injuries
+- **State variations**: Ohio, Washington, Wyoming, and North Dakota require purchasing through a state fund. Most other states allow private insurers.
+
+### Unemployment insurance
+All employers must pay federal (FUTA) and state unemployment taxes. This isn't a policy you purchase — it's a payroll tax administered through your state workforce agency.
+
+### Commercial auto insurance
+Required if you own vehicles used for business (delivery, catering). If employees use personal vehicles for business purposes, you need hired and non-owned auto coverage.
+
+## Strongly recommended (often contractually required)
+
+### General liability insurance
+Covers third-party bodily injury (customer slips), property damage, and personal injury (advertising claims). Nearly every commercial lease requires it.
+
+- **Typical limits**: $1M per occurrence / $2M aggregate
+- **Typical cost**: $500–$2,000/year for small restaurants
+- **What it covers**: Slip-and-fall injuries, foodborne illness claims, property damage to neighboring businesses
+
+### Commercial property insurance
+Covers your building (if owned), equipment, inventory, furniture, and fixtures against fire, theft, storms, and vandalism.
+
+- **Typical cost**: $1,000–$5,000/year depending on location and property value
+- **Key exclusions**: Flood and earthquake (separate policies needed in many areas)
+- **Equipment coverage**: Commercial ovens, walk-in coolers, POS systems, dishwashers
+
+### Liquor liability insurance
+Essential if you serve alcohol. General liability often excludes alcohol-related incidents. Liquor liability covers injuries or damage caused by intoxicated patrons.
+
+- **Required by**: Many states as a condition of your liquor license
+- **Typical cost**: $250–$1,500/year depending on alcohol revenue percentage
+- **What it covers**: Fights involving intoxicated patrons, DUI accidents by patrons you served, property damage by intoxicated patrons
+
+## Smart additions for most restaurants
+
+### Business interruption insurance
+Covers lost income if you're forced to close due to a covered event (fire, storm damage, equipment failure). Pays your fixed expenses — rent, loan payments, employee wages — while you're closed.
+
+### Food contamination / spoilage coverage
+Covers losses when refrigeration equipment fails and food inventory spoils. A single walk-in cooler failure can cost $5,000–$20,000 in lost inventory.
+
+### Cyber liability insurance
+If you accept credit cards (you do), you're liable for data breaches. Covers notification costs, credit monitoring, legal fees, and PCI fines.
+
+### Employment practices liability (EPLI)
+Covers claims of wrongful termination, harassment, discrimination, and wage disputes. Restaurant industry has one of the highest rates of employment claims.
+
+## What you can probably skip
+
+- **Professional liability (errors & omissions)**: Designed for professional service firms, not restaurants
+- **Product recall insurance**: Relevant for manufacturers, not individual restaurants
+- **Directors & officers insurance**: Only needed if you have outside investors or a formal board
+
+## How much should a restaurant budget for insurance?
+
+A typical small restaurant (50 seats, 15 employees, $800K revenue) should budget $5,000–$15,000/year for insurance. This breaks down roughly as:
+
+- Workers' comp: $2,000–$5,000
+- General liability: $500–$2,000
+- Property: $1,000–$3,000
+- Liquor liability: $250–$1,500
+- Umbrella: $500–$1,500
+- Other (business interruption, spoilage, cyber): $500–$2,000
+
+## What DocketPack provides
+
+DocketPack generates workers' compensation policy documents, insurance certificate request templates, and compliance checklists customized to your state's specific requirements. Each document references the state statutes that govern insurance requirements for restaurants.`,
+  },
+  {
+    slug: "common-health-code-violations",
+    title: "The 15 Most Common Health Code Violations in US Restaurants",
+    description:
+      "The violations health inspectors find most often — and exactly how to prevent each one. Based on FDA Food Code and state health department data.",
+    seoTitle:
+      "15 Most Common Restaurant Health Code Violations — How to Avoid Them",
+    seoDescription:
+      "The most common health code violations found in US restaurant inspections. How to prevent each one and what it costs if you don't. Based on FDA Food Code.",
+    industry: "restaurant",
+    region: "us",
+    content: `## How restaurant inspections work
+
+Health department inspections in the US are conducted by local or county health departments, typically following the FDA Food Code (2022 edition). Inspectors categorize violations as **critical** (direct risk of foodborne illness) or **non-critical** (indirect risk). Critical violations often require immediate correction.
+
+Most jurisdictions use point-based scoring. Accumulating too many violations can result in a lowered grade, mandatory re-inspection, or closure.
+
+## Critical violations (immediate correction required)
+
+### 1. Improper holding temperatures
+**What inspectors find**: Hot food below 135°F, cold food above 41°F. Walk-in coolers running warm, buffet items sitting out too long, prep tables without refrigeration.
+
+**How to prevent it**: Calibrate thermometers daily. Log cooler temperatures every 4 hours. Use food thermometers for spot checks during service. Train staff on the 2-hour/4-hour rule for foods in the temperature danger zone (41°F–135°F).
+
+### 2. Improper handwashing
+**What inspectors find**: Staff not washing hands after handling raw meat, touching their face, using the restroom, or switching tasks. Handwashing sinks blocked, out of soap, or used for food prep.
+
+**How to prevent it**: Dedicate handwashing sinks — never use them for anything else. Stock soap and paper towels at all times. Post handwashing procedure signs. Train staff on the 20-second wash method with warm water.
+
+### 3. Cross-contamination
+**What inspectors find**: Raw meat stored above ready-to-eat food, same cutting board used for raw chicken and salad, staff handling raw protein then touching plates.
+
+**How to prevent it**: Color-coded cutting boards (red for raw meat, green for produce, etc.). Store raw meat on bottom shelves. Separate prep areas for raw and ready-to-eat. Sanitize surfaces between uses.
+
+### 4. No food safety manager certification
+**What inspectors find**: No one on staff with a valid Food Protection Manager Certification from an ANSI-CFP accredited program (ServSafe, NRFSP, etc.).
+
+**How to prevent it**: Ensure at least one manager per shift has current certification. Track expiration dates — most certs are valid for 5 years. In states requiring food handler cards for all employees, verify within the hiring deadline (30-60 days depending on state).
+
+### 5. Improper cooking temperatures
+**What inspectors find**: Chicken cooked to 145°F instead of 165°F. Ground beef at 140°F instead of 155°F. Eggs for immediate service below 145°F.
+
+**How to prevent it**: Post minimum cooking temperature charts at every cooking station. Use probe thermometers — check the thickest part. Train cooks on specific temperatures: poultry 165°F, ground meat 155°F, seafood/steaks 145°F, reheated leftovers 165°F.
+
+### 6. Contaminated food contact surfaces
+**What inspectors find**: Dirty cutting boards, sanitizer solution at wrong concentration, food residue on slicers or grinders, cracked or scored food contact surfaces harboring bacteria.
+
+**How to prevent it**: Clean and sanitize all food contact surfaces every 4 hours during continuous use. Test sanitizer concentration with test strips (chlorine: 50-100 ppm; quat: per manufacturer). Replace worn cutting boards and utensils.
+
+### 7. Toxic substances improperly stored
+**What inspectors find**: Cleaning chemicals stored above food, pesticides in the kitchen, unlabeled spray bottles, bleach in a food container.
+
+**How to prevent it**: Store all chemicals below and away from food, utensils, and equipment. Keep chemicals in original containers. Label all spray bottles. Lock pesticide storage. Maintain Safety Data Sheets (SDS) for all chemicals.
+
+## Non-critical violations (correct within timeframe)
+
+### 8. Missing or expired permits/licenses
+**What inspectors find**: Expired food service permit, no current business license displayed, expired food handler cards.
+
+**How to prevent it**: Create a compliance calendar. Renew permits 30 days before expiration. Post current licenses in a visible location near the entrance.
+
+### 9. Inadequate pest control
+**What inspectors find**: Evidence of rodents (droppings, gnaw marks), flying insects near food prep, gaps in exterior walls or doors, standing water.
+
+**How to prevent it**: Hire a licensed pest control operator for monthly service. Seal all exterior gaps. Install air curtains at back doors. Empty trash regularly. Clean grease traps on schedule.
+
+### 10. Improper food labeling and dating
+**What inspectors find**: Prepped food without date labels, open containers with no labels, items past their discard date still in the cooler.
+
+**How to prevent it**: Label all prepped items with preparation date and discard date (7 days max at 41°F per FDA Food Code). First-in, first-out (FIFO) rotation on all shelves.
+
+### 11. Employee hygiene violations
+**What inspectors find**: Staff eating or drinking in food prep areas, no hair restraints, jewelry on hands and wrists, dirty uniforms, open wounds without proper covering.
+
+**How to prevent it**: Enforce dress code with hair nets/hats, no jewelry policy, and clean uniform requirements. Designate a staff break area away from food prep. Provide bandages and single-use gloves for cuts.
+
+### 12. Inadequate ventilation / hood maintenance
+**What inspectors find**: Grease buildup on exhaust hoods and filters, non-functioning hood systems, inadequate ventilation causing condensation over food prep areas.
+
+**How to prevent it**: Clean hood filters weekly. Schedule professional hood cleaning quarterly. Verify fire suppression system inspection is current (every 6 months).
+
+### 13. Plumbing and backflow issues
+**What inspectors find**: No air gap on drain lines, missing backflow prevention devices, leaking pipes under sinks, cross-connections between potable and non-potable water.
+
+**How to prevent it**: Install air gaps on all indirect drain connections. Schedule annual backflow preventer testing. Fix leaks immediately — standing water attracts pests.
+
+### 14. Inadequate lighting
+**What inspectors find**: Burned-out bulbs in food prep areas, no shatter-resistant covers on lights above food, insufficient foot-candle levels for safe food preparation.
+
+**How to prevent it**: Maintain 50 foot-candles in food prep areas, 20 in handwashing and storage. Use shatter-resistant bulb covers or coated bulbs over all food areas.
+
+### 15. Missing or incomplete HACCP / food safety plan
+**What inspectors find**: No written food safety plan, plan doesn't address all hazards, no monitoring logs, corrective action procedures not documented.
+
+**How to prevent it**: Maintain a current food safety management plan based on HACCP principles. Log temperature checks, corrective actions, and supplier verification. Keep records for at least 1 year.
+
+## What a violation costs
+
+- **Re-inspection fee**: $100–$500 per visit in most jurisdictions
+- **Closure**: Typically when score drops below threshold (varies: below 70 in some states, below C grade in others)
+- **Fines**: $250–$1,000 per critical violation in most states; repeat offenders face $5,000+
+- **Lawsuits**: Foodborne illness claims average $75,000 in legal costs; settlements range from $10,000 to $500,000+
+- **Reputation**: A low health inspection score posted publicly can reduce revenue by 5-9% (studies vary)
+
+## What DocketPack provides
+
+DocketPack generates FDA Food Code compliance plans, HACCP plan templates, temperature monitoring logs, sanitation schedules, and food safety training records — all customized to your restaurant and state. Each document is designed to address the specific violations inspectors look for, so you have the documentation ready before they arrive.`,
+  },
+  {
+    slug: "restaurant-hiring-compliance",
+    title: "Hiring Compliance for Restaurants: Federal and State Requirements",
+    description:
+      "Every document and legal requirement for hiring restaurant employees — I-9 verification, wage notices, anti-discrimination, minor employment, tip credit, and state-specific obligations.",
+    seoTitle:
+      "Restaurant Hiring Compliance Guide — Federal & State Employment Law",
+    seoDescription:
+      "Complete hiring compliance guide for restaurants. I-9 forms, wage notices, anti-discrimination, minor employment rules, tip credit, and state-by-state requirements.",
+    industry: "restaurant",
+    region: "us",
+    content: `## Why hiring compliance matters for restaurants
+
+The restaurant industry has one of the highest employee turnover rates in the US — averaging 75-80% annually. That means you're hiring constantly, and every hire triggers a set of federal and state compliance requirements. Getting them wrong exposes you to DOL audits, EEOC complaints, state labor board penalties, and employee lawsuits.
+
+This guide covers everything you need to do — and document — when hiring restaurant staff.
+
+## Federal requirements (apply to all 50 states)
+
+### Form I-9: Employment Eligibility Verification
+**Required for**: Every employee hired, including US citizens.
+
+**Timeline**: Section 1 completed by employee on or before first day of work. Section 2 completed by employer within 3 business days of hire.
+
+**Documents**: Employee must present original documents from List A (proving identity and work authorization) OR one from List B (identity) plus one from List C (work authorization).
+
+**Retention**: Keep I-9 forms for 3 years after hire date or 1 year after termination, whichever is later. ICE can audit at any time with 3 days' notice.
+
+**Penalties**: $252–$2,507 per form for first offense paperwork violations. $698–$5,579 per worker for knowingly employing unauthorized workers.
+
+### E-Verify
+Not federally mandated for most private employers, but required by law in 22 states (including Arizona, Mississippi, Alabama, Georgia, North Carolina, South Carolina, Tennessee, and Utah). Some states require it only for public contracts or employers above a certain size.
+
+### Anti-discrimination in hiring (EEOC)
+Title VII of the Civil Rights Act (15+ employees), the ADA (15+ employees), and the ADEA (20+ employees) prohibit discrimination in hiring based on race, color, religion, sex, national origin, disability, or age (40+).
+
+**What this means practically**:
+- Standardize interview questions across all candidates
+- Document legitimate, job-related reasons for not hiring
+- Don't ask about disability, pregnancy, religion, or national origin
+- "Ban the box" laws in many states restrict when you can ask about criminal history
+
+### Fair Labor Standards Act (FLSA) wage requirements
+Before the first day, you must determine and document:
+- Whether the position is exempt or non-exempt (almost all restaurant workers are non-exempt)
+- The applicable minimum wage (federal $7.25/hr or state minimum, whichever is higher)
+- Tip credit amount if applicable (federal allows $5.12/hr tip credit; employee must receive at least $2.13/hr direct wage)
+- Overtime rate (1.5x regular rate for hours over 40/week)
+
+### Poster requirements
+Federal law requires you to display several posters where employees can see them:
+- FLSA Minimum Wage poster
+- OSHA "Job Safety and Health" poster
+- EEOC "Equal Employment Opportunity" poster
+- FMLA poster (if 50+ employees)
+- EPPA (polygraph protection) poster
+- USERRA (military leave) poster
+
+### New hire reporting
+All employers must report new hires to their state's new hire reporting agency within 20 days of hire (some states require faster reporting). This is used for child support enforcement.
+
+## State-specific requirements
+
+State requirements vary significantly. Here are the most common categories:
+
+### Wage theft prevention notices
+Many states (California, New York, etc.) require written wage notices at the time of hire, specifying:
+- Rate of pay
+- Pay frequency
+- Overtime rate
+- Tip credit amount (if applicable)
+- Employer's legal name and address
+- Worker's compensation carrier information
+
+**New York** requires the Wage Theft Prevention Act notice in the employee's primary language.
+**California** requires the DLSE-NTE notice at hire and within 7 days of any pay change.
+
+### State new hire paperwork
+Common state-specific documents include:
+- State W-4 (withholding allowance) — required in states with income tax
+- State-specific tax registration forms
+- Paid family leave enrollment (CA, NY, NJ, WA, MA, etc.)
+- Workers' compensation acknowledgment
+
+### Minor employment restrictions
+Restaurants employ a significant number of workers under 18. Federal law (FLSA) sets baseline rules; states often add stricter requirements:
+
+- **Hours**: 14-15 year olds limited to 3 hrs on school days, 18 hrs in school weeks. 16-17 year olds have fewer federal restrictions but many states limit late-night work.
+- **Prohibited tasks**: Minors under 18 cannot operate commercial meat slicers, dough mixers, or bakery machines. Under 16 cannot cook (except at counters served by limited cooking).
+- **Work permits**: Many states require work permits or employment certificates for minors.
+- **Penalties**: Child labor violations carry fines up to $15,138 per violation under federal law.
+
+### Tip credit disclosures
+If you're taking a tip credit against minimum wage (allowed in 43 states), you must inform each tipped employee IN ADVANCE of:
+- The amount of direct (cash) wage you'll pay
+- The tip credit amount you're claiming
+- That the tip credit cannot exceed actual tips received
+- That tips are the property of the employee
+- The effective date and applicable state law
+
+Failure to provide this notice can void your tip credit retroactively — meaning you owe the full minimum wage for every hour worked.
+
+### Food handler certification deadlines
+Most states with food handler requirements have a deadline for new hires:
+- **California**: Within 30 days of hire
+- **Texas**: Within 60 days of employment
+- **Florida**: Within 60 days of employment
+- **Illinois**: Within 30 days of employment
+- **New York (NYC)**: Supervisory employee must have Food Protection Certificate before starting
+
+Track these deadlines and document completion. Inspectors check.
+
+## The hiring compliance checklist
+
+For every new restaurant hire, you should:
+
+1. Complete and file Form I-9 (within 3 business days)
+2. Run E-Verify if required by your state
+3. Provide written wage notice (required in many states)
+4. Deliver tip credit notice if position is tipped
+5. Have employee complete federal W-4
+6. Have employee complete state W-4 (if applicable)
+7. Report new hire to state agency (within 20 days)
+8. Enroll in workers' compensation
+9. Verify food handler certification (or set deadline)
+10. Verify age and obtain work permit if under 18
+11. Provide employee handbook acknowledgment
+12. Post all required federal and state posters
+13. Set up payroll with correct wage, overtime, and tax withholding
+14. Document anti-discrimination compliance (standardized process)
+
+## What DocketPack provides
+
+DocketPack generates employment contracts, I-9 compliance procedures, wage and hour policies, tip credit notification templates, minor employment compliance documents, and anti-discrimination policies — all customized to your restaurant and state. Each document cites the specific federal and state statutes that apply.`,
+  },
+  {
+    slug: "restaurant-tax-deductions",
+    title: "Restaurant Tax Deductions: What You Can Write Off in 2026",
+    description:
+      "Every tax deduction available to US restaurant owners — from food costs and equipment to employee meals and tip credits. Maximize your deductions legally.",
+    seoTitle:
+      "Restaurant Tax Deductions 2026 — Complete Write-Off Guide",
+    seoDescription:
+      "Complete guide to restaurant tax deductions for 2026. Food costs, equipment, employee meals, tip credits, depreciation, and more. Maximize your write-offs legally.",
+    industry: "restaurant",
+    region: "us",
+    content: `## Why restaurant tax deductions matter
+
+Restaurants operate on thin margins — typically 3-9% net profit. Every legitimate deduction directly improves your bottom line. A $10,000 deduction at a 25% effective tax rate saves you $2,500 in taxes. Over a year, properly tracking all deductions can save a restaurant tens of thousands of dollars.
+
+This guide covers every major deduction available to US restaurant owners under current tax law.
+
+## Cost of goods sold (COGS)
+
+Your largest deduction. COGS includes everything that goes into the food and beverages you sell:
+
+- **Food and ingredient costs**: Everything purchased for meal preparation
+- **Beverage costs**: Alcohol, soft drinks, coffee, tea
+- **Packaging**: Takeout containers, bags, napkins for off-premise orders
+- **Condiments and supplies**: Salt, pepper, cooking oils, cleaning supplies used in food prep areas
+
+**Tracking tip**: Keep every supplier invoice. Most POS systems can generate COGS reports by category. Aim for food cost of 28-35% of revenue and beverage cost of 20-25%.
+
+## Labor deductions
+
+### Wages and salaries
+All employee compensation is deductible: hourly wages, salaries, overtime, bonuses, and commissions.
+
+### Payroll taxes
+The employer's share of FICA (Social Security and Medicare), FUTA, and state unemployment taxes are deductible.
+
+### Employee benefits
+Health insurance premiums, retirement plan contributions (401(k) match, SIMPLE IRA), and group life insurance premiums are deductible.
+
+### FICA tip credit (Form 8846)
+This is one of the most valuable and most overlooked restaurant tax benefits. Employers can claim a tax CREDIT (not just a deduction — a dollar-for-dollar reduction in tax owed) for the employer's share of FICA taxes paid on tips that exceed the federal minimum wage.
+
+**How it works**: If a tipped employee receives $200 in tips during a pay period and their direct wage is $2.13/hr, you calculate the FICA tip credit on the tips that exceed the amount needed to bring their wage to $7.25/hr. The credit equals 7.65% of those excess tips.
+
+**For a restaurant with 20 tipped employees averaging $150/day in tips, the FICA tip credit can be worth $25,000-$40,000 per year.**
+
+File Form 8846 with your annual return. This is free money that many restaurant owners miss.
+
+## Occupancy costs
+
+### Rent
+Your monthly lease payment is fully deductible. If you prepay rent, you can only deduct the portion attributable to the current tax year.
+
+### Utilities
+Electricity, gas, water, sewer, trash removal, and internet service for your restaurant location.
+
+### Property taxes
+If you own the building, property taxes are deductible. If you pay property taxes as part of your lease (common in NNN leases), that portion is also deductible.
+
+### Insurance premiums
+All business insurance: general liability, property, workers' comp, liquor liability, business interruption, umbrella policies.
+
+## Equipment and depreciation
+
+### Section 179 expensing
+You can immediately expense (deduct in the year of purchase) up to $1,220,000 (2024 limit, adjusted annually) of qualifying equipment: commercial ovens, refrigerators, dishwashers, POS systems, furniture, vehicles used for business.
+
+### Bonus depreciation
+100% bonus depreciation was available through 2022; it's phasing down (80% in 2023, 60% in 2024, 40% in 2025, 20% in 2026). Plan major equipment purchases with this phase-down in mind.
+
+### Regular depreciation
+Equipment not expensed under Section 179 or bonus depreciation is depreciated over its useful life: 5 years for kitchen equipment, 7 years for furniture and fixtures, 15 years for restaurant improvements (Qualified Improvement Property under TCJA).
+
+### Repair and maintenance
+Routine maintenance — fixing a broken dishwasher, replacing a burner on a stove, repairing HVAC — is immediately deductible. Improvements that significantly extend the life of the equipment must be capitalized and depreciated.
+
+## Marketing and advertising
+
+- **Online advertising**: Google Ads, Facebook/Instagram ads, Yelp advertising
+- **Website costs**: Hosting, domain registration, design, online ordering platforms
+- **Print materials**: Menus, business cards, flyers, signage
+- **Third-party platform fees**: DoorDash, Uber Eats, and Grubhub commission fees are deductible as advertising or service expenses
+- **Loyalty programs**: Costs of operating customer loyalty or rewards programs
+
+## Meals and entertainment
+
+### Employee meals
+Meals provided to employees during their shift are 50% deductible (previously 100% during COVID — that provision expired).
+
+### Business meals
+Meals with clients, vendors, or business contacts where business is discussed are 50% deductible. Keep receipts and note the business purpose, attendees, and topics discussed.
+
+## Professional services
+
+- **Accounting and bookkeeping fees**
+- **Legal fees for business matters**
+- **Consulting fees** (menu development, operations, marketing)
+- **Credit card processing fees** (typically 2-3.5% of revenue — a significant deduction)
+- **Payroll service fees**
+- **POS system monthly fees**
+
+## Travel and vehicle expenses
+
+- **Business travel**: Conferences, food shows, supplier visits
+- **Vehicle expenses**: Standard mileage rate (67¢/mile in 2024) for business use, or actual expenses (gas, insurance, maintenance, depreciation) prorated by business use percentage
+- **Delivery vehicle expenses**: If you operate delivery, all associated vehicle costs are deductible based on business use
+
+## Often-missed deductions
+
+### Startup costs
+If you opened your restaurant this year, you can deduct up to $5,000 in startup costs immediately (reduced dollar-for-dollar for costs over $50,000). Remaining startup costs are amortized over 15 years.
+
+### Uniform costs
+Chef coats, branded uniforms, aprons, non-slip shoes required by your dress code — all deductible. If you provide uniforms, the cost is deductible. If employees buy their own, consider reimbursing (tax-free to the employee under an accountable plan).
+
+### Music licensing
+ASCAP, BMI, or SESAC licensing fees for playing music in your restaurant.
+
+### Waste removal and grease trap cleaning
+Regular grease trap pumping, dumpster rental, and recycling services.
+
+### Pest control
+Monthly pest control service — deductible as a routine operating expense.
+
+### Training costs
+Food safety training, ServSafe certifications, TIPS alcohol training, management training, and onboarding costs for new hires.
+
+### Bad debt
+If you extend credit to catering clients or corporate accounts and they don't pay, the uncollected amount is deductible as bad debt.
+
+## Record-keeping requirements
+
+The IRS requires you to maintain records supporting every deduction:
+- **Receipts**: For all expenses over $75 (recommended for all expenses)
+- **Bank and credit card statements**: Reconciled monthly
+- **Payroll records**: Maintained for at least 4 years
+- **Depreciation schedules**: Maintained for the life of each asset plus 3 years
+- **Mileage logs**: If claiming vehicle deductions
+
+Use accounting software (QuickBooks, Xero, FreshBooks) to categorize expenses in real time. Don't wait until tax season to organize a shoebox of receipts.
+
+## What DocketPack provides
+
+DocketPack generates IRS payroll and tax compliance documents, tip reporting procedures, employment record templates, and financial record-keeping policies — all customized to your restaurant. Each document references the specific IRS sections and state requirements that apply to your business, helping you maintain the documentation needed to support your deductions.`,
+  },
 ];
