@@ -1,0 +1,453 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { CategoryBadge } from "@/components/CategoryBadge";
+import { RubberStampCTA } from "@/components/RubberStampCTA";
+import {
+  getDocumentBySlug,
+  getUSFederalDocuments,
+  getUSStateDocuments,
+  getAllUSDocumentsForState,
+  getCategoryBySlug,
+  getCategoriesForRegion,
+  getDocumentsByRegionAndCategory,
+} from "@/lib/data";
+import { US_STATE_SLUGS, getStateBySlug, US_STATES } from "@/data/us-states";
+
+/**
+ * Catch-all route for US restaurant pages:
+ *   /restaurant/[slug]           → federal doc detail (if slug NOT in US_STATE_SLUGS)
+ *   /restaurant/[state]          → state overview (if slug IS in US_STATE_SLUGS)
+ *   /restaurant/[state]/[slug]   → state doc detail
+ */
+
+export function generateStaticParams() {
+  const params: { params: string[] }[] = [];
+
+  // Federal doc pages: /restaurant/[slug]
+  for (const doc of getUSFederalDocuments()) {
+    params.push({ params: [doc.slug] });
+  }
+
+  // State overview pages: /restaurant/[state]
+  for (const state of US_STATES) {
+    params.push({ params: [state.slug] });
+  }
+
+  // State doc pages: /restaurant/[state]/[slug]
+  for (const state of US_STATES) {
+    for (const doc of getUSStateDocuments(state.slug)) {
+      params.push({ params: [state.slug, doc.slug] });
+    }
+  }
+
+  return params;
+}
+
+type PageType =
+  | { kind: "federal-doc"; doc: NonNullable<ReturnType<typeof getDocumentBySlug>> }
+  | { kind: "state-overview"; stateSlug: string }
+  | { kind: "state-doc"; stateSlug: string; doc: NonNullable<ReturnType<typeof getDocumentBySlug>> };
+
+function resolveParams(segments: string[]): PageType | null {
+  if (segments.length === 1) {
+    const [first] = segments;
+    if (US_STATE_SLUGS.has(first)) {
+      return { kind: "state-overview", stateSlug: first };
+    }
+    const doc = getDocumentBySlug(first);
+    if (doc && doc.region === "us" && doc.state === null) {
+      return { kind: "federal-doc", doc };
+    }
+    return null;
+  }
+
+  if (segments.length === 2) {
+    const [stateSlug, docSlug] = segments;
+    if (!US_STATE_SLUGS.has(stateSlug)) return null;
+    const doc = getDocumentBySlug(docSlug);
+    if (doc && doc.region === "us" && doc.state === stateSlug) {
+      return { kind: "state-doc", stateSlug, doc };
+    }
+    return null;
+  }
+
+  return null;
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ params: string[] }>;
+}): Promise<Metadata> {
+  const { params: segments } = await params;
+  const resolved = resolveParams(segments);
+  if (!resolved) return { title: "Not Found" };
+
+  if (resolved.kind === "federal-doc" || resolved.kind === "state-doc") {
+    return {
+      title: resolved.doc.seoTitle,
+      description: resolved.doc.seoDescription,
+      openGraph: { title: resolved.doc.seoTitle, description: resolved.doc.seoDescription },
+    };
+  }
+
+  // state-overview
+  const state = getStateBySlug(resolved.stateSlug);
+  if (!state) return { title: "Not Found" };
+  return {
+    title: `${state.name} Restaurant Documents — State Compliance Requirements`,
+    description: `Every compliance document your ${state.name} restaurant needs. State-specific regulations plus federal requirements. Minimum wage ${state.minWage}, food handler certification, liquor licensing, and more.`,
+  };
+}
+
+export default async function USRestaurantCatchAll({
+  params,
+}: {
+  params: Promise<{ params: string[] }>;
+}) {
+  const { params: segments } = await params;
+  const resolved = resolveParams(segments);
+  if (!resolved) notFound();
+
+  if (resolved.kind === "state-overview") {
+    return <StateOverview stateSlug={resolved.stateSlug} />;
+  }
+
+  return <DocumentDetail doc={resolved.doc} stateSlug={resolved.kind === "state-doc" ? resolved.stateSlug : null} />;
+}
+
+// ── State Overview Component ──────────────────────────────────
+
+function StateOverview({ stateSlug }: { stateSlug: string }) {
+  const state = getStateBySlug(stateSlug);
+  if (!state) notFound();
+
+  const stateDocs = getUSStateDocuments(stateSlug);
+  const federalDocs = getUSFederalDocuments();
+  const allDocs = getAllUSDocumentsForState(stateSlug);
+
+  return (
+    <>
+      <section className="bg-cotton py-16 md:py-20">
+        <div className="mx-auto max-w-[1120px] px-6 md:px-12">
+          <div className="flex items-center gap-3 mb-4">
+            <span className="inline-block border-2 border-walnut px-3 py-1 font-mono text-xs font-bold tracking-wider text-walnut uppercase">
+              {state.abbreviation}
+            </span>
+          </div>
+          <h1 className="font-heading text-4xl text-walnut md:text-5xl lg:text-6xl">
+            {state.name} Restaurant Documents
+          </h1>
+          <p className="mt-4 max-w-2xl font-body text-base font-light text-graphite leading-relaxed">
+            {stateDocs.length} state-specific documents plus {federalDocs.length} federal
+            requirements. Everything your {state.name} restaurant needs for full compliance.
+          </p>
+          <div className="mt-8">
+            <RubberStampCTA href={`/generate/?industry=restaurant&state=${stateSlug}`} size="large">
+              Generate All {allDocs.length} Documents — $79
+            </RubberStampCTA>
+          </div>
+        </div>
+      </section>
+
+      {/* State quick facts */}
+      <section className="border-t-2 border-dashed border-fold bg-manila/50 py-12 md:py-16">
+        <div className="mx-auto max-w-[1120px] px-6 md:px-12">
+          <h2 className="font-heading text-2xl text-walnut">
+            {state.name} at a Glance
+          </h2>
+          <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+            {[
+              { label: "Minimum Wage", value: state.minWage },
+              { label: "Tipped Wage", value: state.tippedWage },
+              { label: "Restaurants", value: state.restaurantCount },
+              { label: "Health Dept", value: state.healthDept },
+            ].map((item) => (
+              <div key={item.label} className="border border-fold bg-cotton p-4">
+                <p className="font-mono text-[10px] tracking-wider text-graphite uppercase">
+                  {item.label}
+                </p>
+                <p className="mt-1 font-body text-sm font-medium text-walnut">
+                  {item.value}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* State-specific docs */}
+      <section className="border-t-2 border-walnut bg-cotton py-12 md:py-16">
+        <div className="mx-auto max-w-[1120px] px-6 md:px-12">
+          <h2 className="font-heading text-2xl text-walnut md:text-3xl">
+            {state.name} State Documents
+          </h2>
+          <p className="mt-2 font-body text-sm font-light text-graphite">
+            Documents specific to {state.name} state regulations.
+          </p>
+          <div className="mt-8 grid grid-cols-1 gap-3 md:grid-cols-2">
+            {stateDocs.map((doc) => (
+              <Link
+                key={doc.slug}
+                href={`/restaurant/${stateSlug}/${doc.slug}/`}
+                className="group block border border-fold bg-manila/40 p-6 transition-colors hover:bg-manila/70"
+              >
+                <div className="flex items-center gap-3">
+                  <CategoryBadge category={doc.category} />
+                  {doc.required && (
+                    <span className="font-mono text-[10px] font-bold tracking-wider text-burgundy uppercase">
+                      Required
+                    </span>
+                  )}
+                </div>
+                <h3 className="mt-3 font-heading text-xl text-walnut group-hover:text-burgundy transition-colors">
+                  {doc.name}
+                </h3>
+                <p className="mt-2 font-body text-sm font-light text-graphite leading-relaxed line-clamp-2">
+                  {doc.shortDescription}
+                </p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Federal docs */}
+      <section className="border-t-2 border-dashed border-fold bg-cotton py-12 md:py-16">
+        <div className="mx-auto max-w-[1120px] px-6 md:px-12">
+          <h2 className="font-heading text-2xl text-walnut md:text-3xl">
+            Federal Requirements
+          </h2>
+          <p className="mt-2 font-body text-sm font-light text-graphite">
+            These federal documents also apply to your {state.name} restaurant.
+          </p>
+          <div className="mt-8 grid grid-cols-1 gap-3 md:grid-cols-2">
+            {federalDocs.map((doc) => (
+              <Link
+                key={doc.slug}
+                href={`/restaurant/${doc.slug}/`}
+                className="group block border border-fold bg-manila/40 p-6 transition-colors hover:bg-manila/70"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="inline-block border border-fold bg-cotton px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider text-graphite uppercase">
+                    Federal
+                  </span>
+                  {doc.required && (
+                    <span className="font-mono text-[10px] font-bold tracking-wider text-burgundy uppercase">
+                      Required
+                    </span>
+                  )}
+                </div>
+                <h3 className="mt-3 font-heading text-xl text-walnut group-hover:text-burgundy transition-colors">
+                  {doc.name}
+                </h3>
+                <p className="mt-2 font-body text-sm font-light text-graphite leading-relaxed line-clamp-2">
+                  {doc.shortDescription}
+                </p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="border-t-2 border-walnut bg-manila/30 py-16 md:py-20">
+        <div className="mx-auto max-w-[1120px] px-6 text-center md:px-12">
+          <h2 className="font-heading text-3xl text-walnut">
+            All {allDocs.length} {state.name} documents. Ready in minutes.
+          </h2>
+          <div className="mt-8">
+            <RubberStampCTA href={`/generate/?industry=restaurant&state=${stateSlug}`} size="large">
+              Generate Your {state.name} Pack — $79
+            </RubberStampCTA>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+
+// ── Document Detail Component ─────────────────────────────────
+
+function DocumentDetail({
+  doc,
+  stateSlug,
+}: {
+  doc: NonNullable<ReturnType<typeof getDocumentBySlug>>;
+  stateSlug: string | null;
+}) {
+  const category = getCategoryBySlug(doc.category);
+  const state = stateSlug ? getStateBySlug(stateSlug) : null;
+  const relatedDocs = doc.relatedDocuments
+    .map((s) => getDocumentBySlug(s))
+    .filter(Boolean);
+
+  const generateHref = stateSlug
+    ? `/generate/?docs=${doc.slug}&state=${stateSlug}`
+    : `/generate/?docs=${doc.slug}`;
+  const packHref = stateSlug
+    ? `/generate/?industry=restaurant&state=${stateSlug}`
+    : "/generate/?industry=restaurant";
+
+  return (
+    <>
+      <section className="bg-cotton py-12 md:py-16">
+        <div className="mx-auto max-w-[1120px] px-6 md:px-12">
+          <div className="flex items-center gap-3">
+            {state ? (
+              <span className="inline-block border-2 border-walnut px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider text-walnut uppercase">
+                {state.abbreviation}
+              </span>
+            ) : (
+              <span className="inline-block border border-fold bg-cotton px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider text-graphite uppercase">
+                Federal
+              </span>
+            )}
+            <CategoryBadge category={doc.category} />
+            {doc.required && (
+              <span className="font-mono text-[10px] font-bold tracking-wider text-burgundy uppercase">
+                Required
+              </span>
+            )}
+          </div>
+          <h1 className="mt-4 font-heading text-4xl text-walnut md:text-5xl">
+            {doc.name}
+          </h1>
+          <p className="mt-4 max-w-2xl font-body text-lg font-light text-graphite leading-relaxed">
+            {doc.shortDescription}
+          </p>
+          <div className="mt-8 flex flex-wrap gap-4">
+            <RubberStampCTA href={generateHref}>
+              Generate This Document — $9
+            </RubberStampCTA>
+            <RubberStampCTA href={packHref}>
+              Get All Documents — $79
+            </RubberStampCTA>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-t-2 border-dashed border-fold bg-cotton py-12 md:py-16">
+        <div className="mx-auto max-w-[1120px] px-6 md:px-12">
+          <div className="grid grid-cols-1 gap-16 md:grid-cols-5">
+            <div className="md:col-span-3">
+              <h2 className="font-heading text-2xl text-walnut">
+                What this document covers
+              </h2>
+              <p className="mt-4 font-body text-base font-light text-graphite leading-relaxed">
+                {doc.description}
+              </p>
+
+              <h3 className="mt-10 font-heading text-xl text-walnut">
+                Key sections included
+              </h3>
+              <ul className="mt-4 space-y-2">
+                {doc.keySections.map((section) => (
+                  <li key={section} className="flex gap-3 font-body text-sm text-walnut">
+                    <span className="mt-1.5 h-3 w-3 flex-shrink-0 border border-fold bg-cotton" />
+                    {section}
+                  </li>
+                ))}
+              </ul>
+
+              {doc.faq.length > 0 && (
+                <>
+                  <h3 className="mt-12 font-heading text-xl text-walnut">
+                    Frequently asked questions
+                  </h3>
+                  <div className="mt-6 space-y-6">
+                    {doc.faq.map((item, i) => (
+                      <div key={i}>
+                        <h4 className="font-body text-base font-medium text-walnut">
+                          {item.q}
+                        </h4>
+                        <p className="mt-2 font-body text-sm font-light text-graphite leading-relaxed">
+                          {item.a}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="md:col-span-2">
+              <div className="border border-fold bg-manila p-6">
+                <h4 className="font-mono text-xs font-bold tracking-wider text-graphite uppercase">
+                  Document details
+                </h4>
+                <dl className="mt-4 space-y-4">
+                  {state && (
+                    <div>
+                      <dt className="font-mono text-[10px] tracking-wider text-graphite uppercase">State</dt>
+                      <dd className="mt-1 font-body text-sm text-walnut">{state.name}</dd>
+                    </div>
+                  )}
+                  <div>
+                    <dt className="font-mono text-[10px] tracking-wider text-graphite uppercase">Legal basis</dt>
+                    <dd className="mt-1 font-body text-sm text-walnut">{doc.legalBasis}</dd>
+                  </div>
+                  <div>
+                    <dt className="font-mono text-[10px] tracking-wider text-graphite uppercase">Enforced by</dt>
+                    <dd className="mt-1 font-body text-sm text-walnut">{doc.authority}</dd>
+                  </div>
+                  <div>
+                    <dt className="font-mono text-[10px] tracking-wider text-graphite uppercase">Penalty for absence</dt>
+                    <dd className="mt-1 font-body text-sm text-walnut">{doc.penaltyForAbsence}</dd>
+                  </div>
+                  <div>
+                    <dt className="font-mono text-[10px] tracking-wider text-graphite uppercase">Category</dt>
+                    <dd className="mt-1 font-body text-sm text-walnut">{category?.name || doc.category}</dd>
+                  </div>
+                </dl>
+              </div>
+
+              {relatedDocs.length > 0 && (
+                <div className="mt-6 border border-fold bg-cotton p-6">
+                  <h4 className="font-mono text-xs font-bold tracking-wider text-graphite uppercase">
+                    Related documents
+                  </h4>
+                  <ul className="mt-4 space-y-2">
+                    {relatedDocs.map((rd) => {
+                      const rdUrl = rd!.state
+                        ? `/restaurant/${rd!.state}/${rd!.slug}/`
+                        : `/restaurant/${rd!.slug}/`;
+                      return (
+                        <li key={rd!.slug}>
+                          <Link
+                            href={rdUrl}
+                            className="font-body text-sm text-walnut transition-colors hover:text-burgundy"
+                          >
+                            {rd!.name}
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-t-2 border-walnut bg-manila/30 py-12 md:py-16">
+        <div className="mx-auto max-w-[1120px] px-6 text-center md:px-12">
+          <h2 className="font-heading text-2xl text-walnut md:text-3xl">
+            Generate your {doc.name} in minutes
+          </h2>
+          <p className="mx-auto mt-3 max-w-lg font-body text-sm font-light text-graphite">
+            Customised with your business name, address, and details.
+            Legally referenced. Ready to print and file.
+          </p>
+          <div className="mt-8 flex justify-center gap-4">
+            <RubberStampCTA href={generateHref}>
+              Generate This Document — $9
+            </RubberStampCTA>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}

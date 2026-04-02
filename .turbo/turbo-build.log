@@ -1,0 +1,76 @@
+
+> @rogerson/docketpack@0.1.0 build
+> next build
+
+ ⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /Users/andrewspeer/package-lock.json as the root directory.
+ To silence this warning, set `outputFileTracingRoot` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/output#caveats for more information.
+ Detected additional lockfiles: 
+   * /Users/andrewspeer/Documents/GitHub/rogerson/package-lock.json
+
+   ▲ Next.js 15.5.14
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 7.7s
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/139) ...
+   Generating static pages (34/139) 
+   Generating static pages (69/139) 
+   Generating static pages (104/139) 
+ ✓ Generating static pages (139/139)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                                Size  First Load JS
+┌ ○ /                                                     178 B         106 kB
+├ ○ /_not-found                                           990 B         103 kB
+├ ○ /about                                                178 B         106 kB
+├ ƒ /api/checkout                                         139 B         102 kB
+├ ƒ /api/export/pdf                                       139 B         102 kB
+├ ƒ /api/generate                                         139 B         102 kB
+├ ○ /generate                                             21 kB         123 kB
+├ ○ /guides                                               178 B         106 kB
+├ ● /guides/[slug]                                        178 B         106 kB
+├   ├ /guides/us-restaurant-compliance-checklist
+├   ├ /guides/health-department-inspection-us
+├   ├ /guides/us-restaurant-opening-documents
+├   └ [+3 more paths]
+├ ○ /pricing                                              173 B         106 kB
+├ ○ /privacy                                              139 B         102 kB
+├ ○ /restaurant                                           173 B         106 kB
+├ ● /restaurant/[...params]                               173 B         106 kB
+├   ├ /restaurant/osha-safety-plan
+├   ├ /restaurant/ada-compliance-policy
+├   ├ /restaurant/fda-food-code-compliance
+├   └ [+54 more paths]
+├ ○ /robots.txt                                           139 B         102 kB
+├ ○ /sitemap.xml                                          139 B         102 kB
+├ ○ /terms                                                139 B         102 kB
+├ ○ /uk                                                   178 B         106 kB
+├ ○ /uk/generate                                        34.3 kB         137 kB
+├ ○ /uk/guides                                            178 B         106 kB
+├ ● /uk/guides/[slug]                                     178 B         106 kB
+├   ├ /uk/guides/restaurant-compliance-checklist
+├   ├ /uk/guides/environmental-health-inspection-guide
+├   ├ /uk/guides/food-hygiene-rating-improvement
+├   └ /uk/guides/new-restaurant-opening-documents
+├ ○ /uk/pricing                                           178 B         106 kB
+├ ○ /uk/restaurant                                        173 B         106 kB
+└ ● /uk/restaurant/[slug]                                 173 B         106 kB
+    ├ /uk/restaurant/haccp-plan
+    ├ /uk/restaurant/food-safety-management-system
+    ├ /uk/restaurant/allergen-management-plan
+    └ [+48 more paths]
++ First Load JS shared by all                            102 kB
+  ├ chunks/18-9364a33574b9c97c.js                       46.1 kB
+  ├ chunks/87c73c54-24122e7b92478d00.js                 54.2 kB
+  └ other shared chunks (total)                         1.92 kB
+
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand
+
