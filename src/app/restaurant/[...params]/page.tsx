@@ -193,10 +193,10 @@ function StateOverview({ stateSlug }: { stateSlug: string }) {
                 href={`/restaurant/${stateSlug}/${doc.slug}/`}
                 className="group block border border-fold bg-manila/40 p-6 transition-colors hover:bg-manila/70"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2">
                   <CategoryBadge category={doc.category} />
                   {doc.required && (
-                    <span className="font-mono text-[10px] font-bold tracking-wider text-burgundy uppercase">
+                    <span className="inline-block border border-burgundy/30 bg-burgundy/10 px-2 py-0.5 font-mono text-xs font-bold tracking-wider text-burgundy uppercase">
                       Required
                     </span>
                   )}
@@ -229,12 +229,12 @@ function StateOverview({ stateSlug }: { stateSlug: string }) {
                 href={`/restaurant/${doc.slug}/`}
                 className="group block border border-fold bg-manila/40 p-6 transition-colors hover:bg-manila/70"
               >
-                <div className="flex items-center gap-3">
-                  <span className="inline-block border border-fold bg-cotton px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider text-graphite uppercase">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="inline-block border border-fold bg-cotton px-2 py-0.5 font-mono text-xs font-bold tracking-wider text-graphite uppercase">
                     Federal
                   </span>
                   {doc.required && (
-                    <span className="font-mono text-[10px] font-bold tracking-wider text-burgundy uppercase">
+                    <span className="inline-block border border-burgundy/30 bg-burgundy/10 px-2 py-0.5 font-mono text-xs font-bold tracking-wider text-burgundy uppercase">
                       Required
                     </span>
                   )}
@@ -294,23 +294,30 @@ function DocumentDetail({
     <>
       <section className="bg-cotton py-12 md:py-16">
         <div className="mx-auto max-w-[1120px] px-6 md:px-12">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             {state ? (
-              <span className="inline-block border-2 border-walnut px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider text-walnut uppercase">
+              <span className="inline-block border-2 border-walnut px-3 py-1.5 font-mono text-sm font-bold tracking-wider text-walnut uppercase">
                 {state.abbreviation}
               </span>
             ) : (
-              <span className="inline-block border border-fold bg-cotton px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider text-graphite uppercase">
+              <span className="inline-block border-2 border-fold bg-cotton px-3 py-1.5 font-mono text-sm font-bold tracking-wider text-graphite uppercase">
                 Federal
               </span>
             )}
-            <CategoryBadge category={doc.category} />
+            <span className="inline-block border-2 border-fold bg-cotton px-3 py-1.5 font-mono text-xs font-bold tracking-wider text-graphite uppercase">
+              {getCategoryBySlug(doc.category)?.name || doc.category}
+            </span>
             {doc.required && (
-              <span className="font-mono text-[10px] font-bold tracking-wider text-burgundy uppercase">
+              <span className="inline-block border-2 border-burgundy/40 bg-burgundy/10 px-3 py-1.5 font-mono text-xs font-bold tracking-wider text-burgundy uppercase">
                 Required
               </span>
             )}
           </div>
+          <p className="mt-3 font-mono text-sm tracking-wide text-graphite">
+            {state
+              ? `Required in ${state.name} — additional to federal requirements`
+              : "Applies to all US restaurants regardless of state"}
+          </p>
           <h1 className="mt-4 font-heading text-4xl text-walnut md:text-5xl">
             {doc.name}
           </h1>
@@ -432,13 +439,99 @@ function DocumentDetail({
         </div>
       </section>
 
+      {/* Document Preview */}
+      <section className="border-t-2 border-walnut bg-manila/20 py-12 md:py-16">
+        <div className="mx-auto max-w-[1120px] px-6 md:px-12">
+          <h2 className="font-heading text-2xl text-walnut md:text-3xl">
+            Document preview
+          </h2>
+          <p className="mt-2 font-body text-sm font-light text-graphite">
+            Here&apos;s what your generated {doc.name} looks like. Each document is customized with your business details.
+          </p>
+
+          {/* Paper mock */}
+          <div className="mt-8 mx-auto max-w-2xl">
+            <div className="relative border border-fold bg-white shadow-lg overflow-hidden" style={{ aspectRatio: "8.5/11" }}>
+              {/* SAMPLE watermark */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                <span
+                  className="font-heading text-8xl font-bold text-burgundy/10 select-none md:text-9xl"
+                  style={{ transform: "rotate(-35deg)" }}
+                >
+                  SAMPLE
+                </span>
+              </div>
+
+              {/* Page content */}
+              <div className="relative z-0 px-10 py-10 md:px-14 md:py-12">
+                {/* Header */}
+                <div className="border-b-2 border-walnut pb-4">
+                  <p className="font-mono text-[10px] tracking-widest text-graphite uppercase">
+                    DocketPack &mdash; Generated Document
+                  </p>
+                  <h3 className="mt-3 font-heading text-2xl text-walnut md:text-3xl">
+                    {doc.name}
+                  </h3>
+                  <div className="mt-2 flex flex-wrap gap-x-6 gap-y-1 font-mono text-[10px] text-graphite">
+                    <span>Prepared for: <span className="text-walnut font-bold">[Your Business Name]</span></span>
+                    <span>Date: {new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</span>
+                  </div>
+                </div>
+
+                {/* Simulated document body */}
+                <div className="mt-6 space-y-5">
+                  <div>
+                    <p className="font-mono text-[10px] tracking-wider text-graphite uppercase">
+                      Legal Reference
+                    </p>
+                    <p className="mt-1 font-body text-xs text-walnut leading-relaxed">
+                      {doc.legalBasis}. Enforced by {doc.authority}.
+                    </p>
+                  </div>
+
+                  {doc.keySections.slice(0, 4).map((section, i) => (
+                    <div key={section}>
+                      <h4 className="font-heading text-base text-walnut">
+                        {i + 1}. {section}
+                      </h4>
+                      <div className="mt-1.5 space-y-1.5">
+                        <div className="h-2.5 rounded-sm bg-graphite/8 w-full" />
+                        <div className="h-2.5 rounded-sm bg-graphite/8 w-full" />
+                        <div className="h-2.5 rounded-sm bg-graphite/8 w-11/12" />
+                        <div className="h-2.5 rounded-sm bg-graphite/6 w-4/5" />
+                      </div>
+                    </div>
+                  ))}
+
+                  {doc.keySections.length > 4 && (
+                    <p className="font-mono text-xs text-graphite italic">
+                      + {doc.keySections.length - 4} more sections...
+                    </p>
+                  )}
+                </div>
+
+                {/* Footer */}
+                <div className="absolute bottom-8 left-10 right-10 md:left-14 md:right-14 border-t border-fold pt-3 flex justify-between">
+                  <p className="font-mono text-[9px] text-graphite/60">
+                    Generated by DocketPack &mdash; Review with a qualified professional before use
+                  </p>
+                  <p className="font-mono text-[9px] text-graphite/60">
+                    Page 1
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="border-t-2 border-walnut bg-manila/30 py-12 md:py-16">
         <div className="mx-auto max-w-[1120px] px-6 text-center md:px-12">
           <h2 className="font-heading text-2xl text-walnut md:text-3xl">
             Generate your {doc.name} in minutes
           </h2>
           <p className="mx-auto mt-3 max-w-lg font-body text-sm font-light text-graphite">
-            Customised with your business name, address, and details.
+            Customized with your business name, address, and details.
             Legally referenced. Ready to print and file.
           </p>
           <div className="mt-8 flex justify-center gap-4">

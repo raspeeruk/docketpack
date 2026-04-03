@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { usDocuments } from "@/data/us-documents";
 import { industries } from "@/data/industries";
 import { categories } from "@/data/categories";
 import { US_STATES } from "@/data/us-states";
+import { DocumentAccordion } from "@/components/DocumentAccordion";
 
-type Step = 1 | 2 | 3 | 4 | 5 | 6;
+type Step = 1 | 2 | 3 | 4 | 5;
 
 interface BusinessDetails {
   businessName: string;
@@ -32,8 +33,9 @@ const STEPS = [
   "Business Details",
   "Select Documents",
   "Generate",
-  "Download",
 ] as const;
+
+const SESSION_KEY = "docketpack-wizard";
 
 export function USFormWizard() {
   const searchParams = useSearchParams();
@@ -54,81 +56,29 @@ export function USFormWizard() {
   const [generatedDocs, setGeneratedDocs] = useState<GeneratedDoc[]>([]);
   const [generating, setGenerating] = useState(false);
 
-  useEffect(() => {
-    const docsParam = searchParams.get("docs");
-    if (docsParam) {
-      setSelectedDocs(new Set(docsParam.split(",")));
-      setStep(3);
-    }
-    const industryParam = searchParams.get("industry");
-    if (industryParam) {
-      setSelectedIndustry(industryParam);
-    }
-    const stateParam = searchParams.get("state");
-    if (stateParam) {
-      setSelectedState(stateParam);
-    }
-  }, [searchParams]);
-
-  // Get available docs based on selected state
-  const getAvailableDocs = () => {
-    if (selectedState) {
-      // Federal + state-specific
-      return usDocuments.filter(
-        (d) =>
-          d.industry === selectedIndustry &&
-          (d.state === null || d.state === selectedState)
-      );
-    }
-    // Federal only
-    return usDocuments.filter(
-      (d) => d.industry === selectedIndustry && d.state === null
-    );
-  };
-
-  const availableDocs = getAvailableDocs();
-
-  const toggleDoc = (slug: string) => {
-    const next = new Set(selectedDocs);
-    if (next.has(slug)) {
-      next.delete(slug);
-      setSelectAll(false);
-    } else {
-      next.add(slug);
-      if (next.size === availableDocs.length) setSelectAll(true);
-    }
-    setSelectedDocs(next);
-  };
-
-  const toggleSelectAll = () => {
-    if (selectAll) {
-      setSelectedDocs(new Set());
-      setSelectAll(false);
-    } else {
-      setSelectedDocs(new Set(availableDocs.map((d) => d.slug)));
-      setSelectAll(true);
-    }
-  };
-
-  const handleGenerate = async () => {
+  const handleGenerate = useCallback(async (
+    docs: Set<string>,
+    details: BusinessDetails,
+    state: string
+  ) => {
     setGenerating(true);
-    const docs = Array.from(selectedDocs).map((slug) => ({
+    const docList = Array.from(docs).map((slug) => ({
       slug,
       name: usDocuments.find((d) => d.slug === slug)?.name || slug,
       content: "",
       status: "pending" as const,
     }));
-    setGeneratedDocs(docs);
+    setGeneratedDocs(docList);
 
     try {
       const res = await fetch("/api/generate/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          businessDetails,
-          documents: Array.from(selectedDocs),
+          businessDetails: details,
+          documents: Array.from(docs),
           region: "us",
-          state: selectedState || null,
+          state: state || null,
         }),
       });
 
@@ -156,7 +106,92 @@ export function USFormWizard() {
     }
 
     setGenerating(false);
-    setStep(6);
+  }, []);
+
+  useEffect(() => {
+    const paid = searchParams.get("paid");
+
+    if (paid === "true") {
+      // Returning from Stripe — restore state and generate
+      try {
+        const saved = sessionStorage.getItem(SESSION_KEY);
+        if (saved) {
+          const state = JSON.parse(saved);
+          const restoredDocs = new Set<string>(state.selectedDocs || []);
+          setSelectedIndustry(state.selectedIndustry || "restaurant");
+          setSelectedState(state.selectedState || "");
+          setBusinessDetails(state.businessDetails || {
+            businessName: "",
+            businessAddress: "",
+            ownerName: "",
+            employeeCount: "",
+            cuisineType: "",
+            seatingCapacity: "",
+            servesAlcohol: "Yes",
+          });
+          setSelectedDocs(restoredDocs);
+          setStep(5);
+          sessionStorage.removeItem(SESSION_KEY);
+          // Auto-trigger generation
+          handleGenerate(restoredDocs, state.businessDetails, state.selectedState || "");
+          return;
+        }
+      } catch {
+        // sessionStorage unavailable
+      }
+    }
+
+    const docsParam = searchParams.get("docs");
+    const stateParam = searchParams.get("state");
+    const industryParam = searchParams.get("industry");
+    if (industryParam) {
+      setSelectedIndustry(industryParam);
+    }
+    if (stateParam) {
+      setSelectedState(stateParam);
+    }
+    if (docsParam) {
+      setSelectedDocs(new Set(docsParam.split(",")));
+      setStep(stateParam ? 3 : 2);
+    }
+  }, [searchParams, handleGenerate]);
+
+  // Get available docs based on selected state
+  const getAvailableDocs = () => {
+    if (selectedState) {
+      return usDocuments.filter(
+        (d) =>
+          d.industry === selectedIndustry &&
+          (d.state === null || d.state === selectedState)
+      );
+    }
+    return usDocuments.filter(
+      (d) => d.industry === selectedIndustry && d.state === null
+    );
+  };
+
+  const availableDocs = getAvailableDocs();
+
+  const toggleDoc = (slug: string) => {
+    const next = new Set(selectedDocs);
+    if (next.has(slug)) {
+      next.delete(slug);
+      setSelectAll(false);
+    } else {
+      next.add(slug);
+      if (next.size === availableDocs.length) setSelectAll(true);
+    }
+    setSelectedDocs(next);
+  };
+
+  const toggleSelectAll = () => {
+    if (selectAll) {
+      setSelectedDocs(new Set());
+      setSelectAll(false);
+    } else {
+      setSelectedDocs(new Set(availableDocs.map((d) => d.slug)));
+      setSelectAll(true);
+    }
   };
 
   const handleDownloadPDF = async () => {
@@ -188,21 +223,8 @@ export function USFormWizard() {
     }
   };
 
-  const handleCheckout = async () => {
-    const type = selectedDocs.size >= availableDocs.length ? "pack" : "individual";
-    try {
-      const res = await fetch("/api/checkout/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type, documentCount: selectedDocs.size, region: "us" }),
-      });
-      if (!res.ok) return;
-      const data = await res.json();
-      if (data.url) window.location.href = data.url;
-    } catch {
-      // Checkout failed
-    }
-  };
+  // Stripe checkout — temporarily disabled for testing
+  // const handleCheckout = async () => { ... };
 
   const isStep3Valid =
     businessDetails.businessName.trim() !== "" &&
@@ -212,6 +234,11 @@ export function USFormWizard() {
     businessDetails.seatingCapacity.trim() !== "";
 
   const stateName = US_STATES.find((s) => s.slug === selectedState)?.name;
+
+  const priceLabel =
+    selectedDocs.size >= availableDocs.length
+      ? "$79"
+      : `$${selectedDocs.size * 9}`;
 
   return (
     <div>
@@ -301,6 +328,13 @@ export function USFormWizard() {
           <p className="mt-3 font-body text-base font-light text-graphite">
             Choose your state for state-specific documents, or skip for federal-only documents.
           </p>
+          {selectedDocs.size > 0 && !selectedState && (
+            <div className="mt-4 border border-fold bg-manila/50 px-4 py-3">
+              <p className="font-body text-sm text-walnut">
+                Your selected document is a federal requirement. Select your state to also include state-specific documents, or skip for federal only.
+              </p>
+            </div>
+          )}
           <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
             {US_STATES.map((state) => (
               <button
@@ -423,7 +457,7 @@ export function USFormWizard() {
         </div>
       )}
 
-      {/* Step 4: Select Documents */}
+      {/* Step 4: Select Documents (with Accordions) */}
       {step === 4 && (
         <div>
           <h1 className="font-heading text-3xl text-walnut md:text-4xl">
@@ -432,7 +466,23 @@ export function USFormWizard() {
           <p className="mt-3 font-body text-base font-light text-graphite">
             Choose individual documents at $9 each, or select all {availableDocs.length} for $79.
             {stateName && ` Showing federal + ${stateName} state documents.`}
+            {" "}Expand any document to see exactly what&apos;s included.
           </p>
+
+          {!selectedState && (
+            <div className="mt-4 border border-fold bg-manila/50 px-4 py-3">
+              <p className="font-body text-sm text-walnut">
+                Showing federal documents only.{" "}
+                <button
+                  onClick={() => setStep(2)}
+                  className="font-medium text-burgundy underline underline-offset-2 hover:text-burgundy-hover"
+                >
+                  Select your state &rarr;
+                </button>
+                {" "}to add state-specific requirements.
+              </p>
+            </div>
+          )}
 
           <div className="mt-6">
             <button
@@ -461,40 +511,22 @@ export function USFormWizard() {
                   </h3>
                   <div className="mt-3 space-y-1">
                     {federalDocs.map((doc) => (
-                      <label
+                      <DocumentAccordion
                         key={doc.slug}
-                        className={`flex cursor-pointer items-center gap-4 border px-4 py-3 transition-colors ${
-                          selectedDocs.has(doc.slug)
-                            ? "border-burgundy/30 bg-manila/60"
-                            : "border-fold bg-cotton hover:bg-manila/30"
-                        }`}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={selectedDocs.has(doc.slug)}
-                          onChange={() => toggleDoc(doc.slug)}
-                          className="h-4 w-4 accent-burgundy"
-                        />
-                        <span className="flex-1 font-body text-sm text-walnut">
-                          {doc.name}
-                        </span>
-                        {doc.required && (
-                          <span className="font-mono text-[10px] text-burgundy uppercase">
-                            Required
-                          </span>
-                        )}
-                      </label>
+                        doc={doc}
+                        isSelected={selectedDocs.has(doc.slug)}
+                        onToggle={toggleDoc}
+                      />
                     ))}
                   </div>
                 </div>
               );
             })()}
 
-            {/* State-specific docs by category */}
+            {/* State-specific docs */}
             {stateName && (() => {
               const stateSpecificDocs = availableDocs.filter((d) => d.state !== null);
               if (stateSpecificDocs.length === 0) return null;
-              const stateCats = [...new Set(stateSpecificDocs.map((d) => d.category))];
               return (
                 <div>
                   <h3 className="font-heading text-xl text-walnut">
@@ -502,29 +534,12 @@ export function USFormWizard() {
                   </h3>
                   <div className="mt-3 space-y-1">
                     {stateSpecificDocs.map((doc) => (
-                      <label
+                      <DocumentAccordion
                         key={doc.slug}
-                        className={`flex cursor-pointer items-center gap-4 border px-4 py-3 transition-colors ${
-                          selectedDocs.has(doc.slug)
-                            ? "border-burgundy/30 bg-manila/60"
-                            : "border-fold bg-cotton hover:bg-manila/30"
-                        }`}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={selectedDocs.has(doc.slug)}
-                          onChange={() => toggleDoc(doc.slug)}
-                          className="h-4 w-4 accent-burgundy"
-                        />
-                        <span className="flex-1 font-body text-sm text-walnut">
-                          {doc.name}
-                        </span>
-                        {doc.required && (
-                          <span className="font-mono text-[10px] text-burgundy uppercase">
-                            Required
-                          </span>
-                        )}
-                      </label>
+                        doc={doc}
+                        isSelected={selectedDocs.has(doc.slug)}
+                        onToggle={toggleDoc}
+                      />
                     ))}
                   </div>
                 </div>
@@ -544,13 +559,14 @@ export function USFormWizard() {
                 {selectedDocs.size} selected
                 {" \u2014 "}
                 <span className="font-bold text-burgundy">
-                  {selectedDocs.size >= availableDocs.length
-                    ? "$79"
-                    : `$${selectedDocs.size * 9}`}
+                  {priceLabel}
                 </span>
               </span>
               <button
-                onClick={() => setStep(5)}
+                onClick={() => {
+                  setStep(5);
+                  handleGenerate(selectedDocs, businessDetails, selectedState);
+                }}
                 disabled={selectedDocs.size === 0}
                 className="bg-burgundy px-8 py-3 font-body text-sm font-medium text-cotton transition-colors hover:bg-burgundy-hover disabled:opacity-50 disabled:cursor-not-allowed"
               >
@@ -561,25 +577,34 @@ export function USFormWizard() {
         </div>
       )}
 
-      {/* Step 5: Generate */}
+      {/* Step 5: Generate + Download */}
       {step === 5 && (
         <div>
           <h1 className="font-heading text-3xl text-walnut md:text-4xl">
-            Generating your documents
+            {generating
+              ? "Generating your documents"
+              : generatedDocs.some((d) => d.status === "done")
+              ? "Your documents are ready"
+              : "Preparing your documents"}
           </h1>
           <p className="mt-3 font-body text-base font-light text-graphite">
             {generating
-              ? "Creating each document customised to your business. This takes 2-5 minutes."
-              : "Ready to generate. Click below to start."}
+              ? "Creating each document customized to your business. This takes 2\u20135 minutes."
+              : generatedDocs.some((d) => d.status === "done")
+              ? `${generatedDocs.filter((d) => d.status === "done").length} of ${generatedDocs.length} documents generated successfully.`
+              : "Starting generation..."}
           </p>
 
           <div className="mt-8 space-y-2">
-            {(generatedDocs.length > 0 ? generatedDocs : Array.from(selectedDocs).map((slug) => ({
-              slug,
-              name: usDocuments.find((d) => d.slug === slug)?.name || slug,
-              content: "",
-              status: "pending" as const,
-            }))).map((doc) => (
+            {(generatedDocs.length > 0
+              ? generatedDocs
+              : Array.from(selectedDocs).map((slug) => ({
+                  slug,
+                  name: usDocuments.find((d) => d.slug === slug)?.name || slug,
+                  content: "",
+                  status: "pending" as const,
+                }))
+            ).map((doc) => (
               <div
                 key={doc.slug}
                 className={`flex items-center justify-between border px-4 py-3 ${
@@ -605,81 +630,16 @@ export function USFormWizard() {
             ))}
           </div>
 
-          <div className="mt-8 flex gap-4">
-            {!generating && generatedDocs.length === 0 && (
-              <>
-                <button
-                  onClick={() => setStep(4)}
-                  className="border border-fold px-6 py-3 font-body text-sm font-medium text-graphite transition-colors hover:bg-manila"
-                >
-                  Back
-                </button>
-                <button
-                  onClick={handleGenerate}
-                  className="bg-burgundy px-8 py-3 font-body text-sm font-medium text-cotton transition-colors hover:bg-burgundy-hover"
-                >
-                  Start Generation
-                </button>
-              </>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Step 6: Download */}
-      {step === 6 && (
-        <div>
-          <h1 className="font-heading text-3xl text-walnut md:text-4xl">
-            Your documents are ready
-          </h1>
-          <p className="mt-3 font-body text-base font-light text-graphite">
-            {generatedDocs.filter((d) => d.status === "done").length} of{" "}
-            {generatedDocs.length} documents generated successfully.
-          </p>
-
-          <div className="mt-8 space-y-2">
-            {generatedDocs.map((doc) => (
-              <div
-                key={doc.slug}
-                className={`border px-4 py-3 ${
-                  doc.status === "done"
-                    ? "border-walnut/20 bg-manila/40"
-                    : "border-red-300 bg-red-50"
-                }`}
+          {!generating && generatedDocs.some((d) => d.status === "done") && (
+            <div className="mt-8 flex flex-wrap gap-4">
+              <button
+                onClick={handleDownloadPDF}
+                className="bg-burgundy px-8 py-4 font-body text-base font-medium text-cotton transition-colors hover:bg-burgundy-hover"
               >
-                <div className="flex items-center justify-between">
-                  <span className="font-body text-sm text-walnut">
-                    {doc.name}
-                  </span>
-                  <span className="font-mono text-xs text-graphite">
-                    {doc.status === "done" ? "\u2713 Ready" : "Failed"}
-                  </span>
-                </div>
-                {doc.status === "done" && doc.content && (
-                  <div className="mt-3 max-h-32 overflow-hidden border-t border-fold pt-3">
-                    <p className="font-body text-xs text-graphite line-clamp-4 blur-sm">
-                      {doc.content.slice(0, 300)}...
-                    </p>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-8 flex flex-wrap gap-4">
-            <button
-              onClick={handleCheckout}
-              className="bg-burgundy px-8 py-4 font-body text-base font-medium text-cotton transition-colors hover:bg-burgundy-hover"
-            >
-              Pay &amp; Download — {selectedDocs.size >= availableDocs.length ? "$79" : `$${selectedDocs.size * 9}`}
-            </button>
-            <button
-              onClick={handleDownloadPDF}
-              className="border-2 border-walnut px-8 py-4 font-body text-base font-medium text-walnut transition-colors hover:bg-manila"
-            >
-              Download Preview PDF
-            </button>
-          </div>
+                Download PDF
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -11,7 +11,7 @@ const categoryLabels: Record<string, string> = {
 
 export function CategoryBadge({ category }: { category: string }) {
   return (
-    <span className="inline-block border border-fold bg-cotton px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider text-graphite uppercase">
+    <span className="inline-block border border-fold bg-cotton px-2.5 py-1 font-mono text-xs font-bold tracking-wider text-graphite uppercase">
       {categoryLabels[category] || category}
     </span>
   );
