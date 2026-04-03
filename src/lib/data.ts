@@ -3,13 +3,14 @@ import { categories, type Category } from "@/data/categories";
 import { industries, type Industry } from "@/data/industries";
 import { guides, type Guide } from "@/data/guides";
 import { usDocuments } from "@/data/us-documents";
+import { usSalonDocuments } from "@/data/us-salon-documents";
 import { usGuides } from "@/data/us-guides";
 import { US_STATES, US_STATE_SLUGS, getStateBySlug } from "@/data/us-states";
 export type { USState } from "@/data/us-states";
 
 // ── All documents (UK + US combined) ────────────────────────────
 
-const allDocuments: Document[] = [...documents, ...usDocuments];
+const allDocuments: Document[] = [...documents, ...usDocuments, ...usSalonDocuments];
 
 // ── Documents ───────────────────────────────────────────────────
 
@@ -74,20 +75,24 @@ export function getDocumentSlugsByRegion(region: "uk" | "us"): string[] {
     .map((d) => d.slug);
 }
 
-/** Get US federal documents (state: null) */
-export function getUSFederalDocuments(): Document[] {
-  return allDocuments.filter((d) => d.region === "us" && d.state === null);
-}
-
-/** Get US state-specific documents */
-export function getUSStateDocuments(state: string): Document[] {
-  return allDocuments.filter((d) => d.region === "us" && d.state === state);
-}
-
-/** Get all documents for a US state (federal + state-specific) */
-export function getAllUSDocumentsForState(state: string): Document[] {
+/** Get US federal documents (state: null), optionally filtered by industry */
+export function getUSFederalDocuments(industry?: string): Document[] {
   return allDocuments.filter(
-    (d) => d.region === "us" && (d.state === null || d.state === state)
+    (d) => d.region === "us" && d.state === null && (!industry || d.industry === industry)
+  );
+}
+
+/** Get US state-specific documents, optionally filtered by industry */
+export function getUSStateDocuments(state: string, industry?: string): Document[] {
+  return allDocuments.filter(
+    (d) => d.region === "us" && d.state === state && (!industry || d.industry === industry)
+  );
+}
+
+/** Get all documents for a US state (federal + state-specific), optionally filtered by industry */
+export function getAllUSDocumentsForState(state: string, industry?: string): Document[] {
+  return allDocuments.filter(
+    (d) => d.region === "us" && (d.state === null || d.state === state) && (!industry || d.industry === industry)
   );
 }
 

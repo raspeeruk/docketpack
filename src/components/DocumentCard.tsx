@@ -9,14 +9,15 @@ export function DocumentCard({
   doc: Document;
   baseUrl?: string;
 }) {
-  // Default URL pattern: /restaurant/{slug}/ for US, /uk/restaurant/{slug}/ for UK
+  // URL pattern: /{industry}/{slug}/ for US, /uk/restaurant/{slug}/ for UK
+  const industrySlug = doc.industry || "restaurant";
   const href = baseUrl
     ? `${baseUrl}/${doc.slug}/`
     : doc.region === "uk"
     ? `/uk/restaurant/${doc.slug}/`
     : doc.state
-    ? `/restaurant/${doc.state}/${doc.slug}/`
-    : `/restaurant/${doc.slug}/`;
+    ? `/${industrySlug}/${doc.state}/${doc.slug}/`
+    : `/${industrySlug}/${doc.slug}/`;
 
   return (
     <Link

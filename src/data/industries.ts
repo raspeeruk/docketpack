@@ -34,11 +34,17 @@ export const industries: Industry[] = [
   },
   {
     slug: "salon",
-    name: "Salon",
-    description: "Hair salons, beauty parlours, barbershops, and aesthetic treatment providers.",
-    active: false,
-    documentCount: 0,
-    fields: [],
+    name: "Salon & Barbershop",
+    description: "Hair salons, barbershops, beauty parlors, nail salons, spas, and aesthetic treatment providers.",
+    active: true,
+    documentCount: 30,
+    fields: [
+      { key: "salonType", label: "Business type", type: "select", options: ["Hair Salon", "Barbershop", "Nail Salon", "Spa", "Beauty Salon", "Full-Service Salon"], required: true },
+      { key: "stationCount", label: "Number of stations/chairs", type: "number", placeholder: "e.g. 8", required: true },
+      { key: "servicesOffered", label: "Services offered", type: "text", placeholder: "e.g. Cuts, color, blowouts, extensions, nails", required: true },
+      { key: "chemicalServices", label: "Chemical services", type: "select", options: ["Yes — hair color, bleach, relaxers", "Yes — keratin/Brazilian treatments", "Yes — nail acrylics/gels", "Yes — all of the above", "No chemical services"], required: true },
+      { key: "boothRenters", label: "Booth renters", type: "select", options: ["None — all employees", "Some booth renters", "All booth renters"], required: false },
+    ],
   },
   {
     slug: "gym",

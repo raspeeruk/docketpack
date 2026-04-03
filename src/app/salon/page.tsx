@@ -1,18 +1,21 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { RubberStampCTA } from "@/components/RubberStampCTA";
-import { getUSFederalDocuments, getCategoriesForRegion, getDocumentsByRegionAndCategory } from "@/lib/data";
+import { getUSFederalDocuments } from "@/lib/data";
 import { US_STATES } from "@/data/us-states";
 
 export const metadata: Metadata = {
-  title: "US Restaurant Compliance Documents — Federal & State Requirements",
+  title: "Salon & Barbershop Compliance Documents — Federal & State Requirements",
   description:
-    "Every compliance document your US restaurant needs. Federal OSHA, FDA, EEOC, IRS requirements plus state-specific documents for California, Texas, Florida, and New York.",
+    "Every compliance document your salon or barbershop needs. OSHA chemical safety, cosmetology board licensing, worker classification, and state-specific requirements.",
 };
 
-export default function USRestaurantPage() {
-  const federalDocs = getUSFederalDocuments("restaurant");
-  const categories = getCategoriesForRegion("us");
+export default function USSalonPage() {
+  const federalDocs = getUSFederalDocuments("salon");
+
+  // States with salon-specific docs
+  const statesWithDocs = ["california", "texas", "florida", "new-york"];
+  const activeStates = US_STATES.filter((s) => statesWithDocs.includes(s.slug));
 
   return (
     <>
@@ -20,15 +23,16 @@ export default function USRestaurantPage() {
       <section className="bg-cotton py-16 md:py-20">
         <div className="mx-auto max-w-[1120px] px-6 md:px-12">
           <h1 className="font-heading text-4xl text-walnut md:text-5xl lg:text-6xl">
-            US Restaurant Documents
+            Salon & Barbershop Documents
           </h1>
           <p className="mt-4 max-w-2xl font-body text-base font-light text-graphite leading-relaxed">
-            Federal requirements from OSHA, FDA, EEOC, and the IRS — plus
-            state-specific compliance documents. Every document generated for
-            your restaurant, referencing the exact laws that apply to you.
+            OSHA chemical safety, cosmetology board compliance, worker
+            classification, sanitation standards, and employment law — every
+            document generated for your salon, referencing the exact laws that
+            apply to you.
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
-            <RubberStampCTA href="/generate/?industry=restaurant" size="large">
+            <RubberStampCTA href="/generate/?industry=salon" size="large">
               Generate Your Documents — $79
             </RubberStampCTA>
           </div>
@@ -42,14 +46,14 @@ export default function USRestaurantPage() {
             Federal Requirements
           </h2>
           <p className="mt-3 max-w-2xl font-body text-sm font-light text-graphite">
-            These documents are required by federal law for every restaurant in the United States,
-            regardless of state.
+            These documents are required by federal law for every salon and
+            barbershop in the United States, regardless of state.
           </p>
           <div className="mt-8 grid grid-cols-1 gap-3 md:grid-cols-2">
             {federalDocs.map((doc) => (
               <Link
                 key={doc.slug}
-                href={`/restaurant/${doc.slug}/`}
+                href={`/salon/${doc.slug}/`}
                 className="group block border border-fold bg-manila/40 p-6 transition-colors hover:bg-manila/70"
               >
                 <div className="flex items-center gap-3">
@@ -81,15 +85,15 @@ export default function USRestaurantPage() {
             State-Specific Documents
           </h2>
           <p className="mt-3 max-w-2xl font-body text-sm font-light text-graphite">
-            Each state has its own restaurant regulations covering minimum wage, food handler
-            certifications, liquor licensing, and more. Select your state for documents
-            tailored to your local requirements.
+            Each state has its own cosmetology board, sanitation standards, and
+            labor requirements. Select your state for documents tailored to your
+            local regulations.
           </p>
           <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
-            {US_STATES.map((state) => (
+            {activeStates.map((state) => (
               <Link
                 key={state.slug}
-                href={`/restaurant/${state.slug}/`}
+                href={`/salon/${state.slug}/`}
                 className="group border-2 border-walnut bg-cotton p-6 transition-colors hover:bg-manila"
               >
                 <div className="flex items-baseline justify-between">
@@ -101,7 +105,7 @@ export default function USRestaurantPage() {
                   </span>
                 </div>
                 <p className="mt-2 font-mono text-xs text-burgundy">
-                  {state.restaurantCount} restaurants
+                  Cosmetology board + state docs
                 </p>
                 <p className="mt-1 font-body text-xs text-graphite">
                   Min wage: {state.minWage}
@@ -112,6 +116,12 @@ export default function USRestaurantPage() {
               </Link>
             ))}
           </div>
+          <p className="mt-6 font-body text-sm text-graphite">
+            More states coming soon.{" "}
+            <Link href="/request/" className="text-burgundy underline underline-offset-2 hover:text-walnut">
+              Request your state &rarr;
+            </Link>
+          </p>
         </div>
       </section>
 
@@ -122,7 +132,7 @@ export default function USRestaurantPage() {
             Federal + state documents. Your business details. Ready in minutes.
           </h2>
           <div className="mt-8">
-            <RubberStampCTA href="/generate/?industry=restaurant" size="large">
+            <RubberStampCTA href="/generate/?industry=salon" size="large">
               Generate Your Document Pack — $79
             </RubberStampCTA>
           </div>

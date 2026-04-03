@@ -4,6 +4,9 @@ import { US_STATES } from "@/data/us-states";
 
 const BASE = "https://docketpack.com";
 
+// States with salon-specific docs
+const SALON_STATES = ["california", "texas", "florida", "new-york"];
+
 export default function sitemap(): MetadataRoute.Sitemap {
   // ── Global static pages ─────────────────────────────────────
   const globalPages = [
@@ -17,28 +20,29 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/request/`, changeFrequency: "monthly" as const, priority: 0.5 },
   ];
 
-  // ── US pages ────────────────────────────────────────────────
-  const usStaticPages = [
+  // ── US Restaurant pages ───────────────────────────────────────
+  const restaurantPages: MetadataRoute.Sitemap = [
     { url: `${BASE}/restaurant/`, changeFrequency: "weekly" as const, priority: 0.9 },
   ];
 
-  // US federal doc pages
-  const usFederalDocPages = getUSFederalDocuments().map((doc) => ({
-    url: `${BASE}/restaurant/${doc.slug}/`,
-    changeFrequency: "monthly" as const,
-    priority: 0.7,
-  }));
+  // Restaurant federal doc pages
+  for (const doc of getUSFederalDocuments("restaurant")) {
+    restaurantPages.push({
+      url: `${BASE}/restaurant/${doc.slug}/`,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    });
+  }
 
-  // US state overview + state doc pages
-  const usStatePages: MetadataRoute.Sitemap = [];
+  // Restaurant state overview + state doc pages
   for (const state of US_STATES) {
-    usStatePages.push({
+    restaurantPages.push({
       url: `${BASE}/restaurant/${state.slug}/`,
       changeFrequency: "monthly" as const,
       priority: 0.8,
     });
-    for (const doc of getUSStateDocuments(state.slug)) {
-      usStatePages.push({
+    for (const doc of getUSStateDocuments(state.slug, "restaurant")) {
+      restaurantPages.push({
         url: `${BASE}/restaurant/${state.slug}/${doc.slug}/`,
         changeFrequency: "monthly" as const,
         priority: 0.7,
@@ -46,7 +50,39 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }
   }
 
-  // US guide pages
+  // ── US Salon pages ────────────────────────────────────────────
+  const salonPages: MetadataRoute.Sitemap = [
+    { url: `${BASE}/salon/`, changeFrequency: "weekly" as const, priority: 0.9 },
+  ];
+
+  // Salon federal doc pages
+  for (const doc of getUSFederalDocuments("salon")) {
+    salonPages.push({
+      url: `${BASE}/salon/${doc.slug}/`,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    });
+  }
+
+  // Salon state overview + state doc pages
+  for (const stateSlug of SALON_STATES) {
+    const state = US_STATES.find((s) => s.slug === stateSlug);
+    if (!state) continue;
+    salonPages.push({
+      url: `${BASE}/salon/${state.slug}/`,
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    });
+    for (const doc of getUSStateDocuments(state.slug, "salon")) {
+      salonPages.push({
+        url: `${BASE}/salon/${state.slug}/${doc.slug}/`,
+        changeFrequency: "monthly" as const,
+        priority: 0.7,
+      });
+    }
+  }
+
+  // ── US guide pages ────────────────────────────────────────────
   const usGuidePages = getGuidesByRegion("us").map((g) => ({
     url: `${BASE}/guides/${g.slug}/`,
     changeFrequency: "monthly" as const,
@@ -78,9 +114,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     ...globalPages,
-    ...usStaticPages,
-    ...usFederalDocPages,
-    ...usStatePages,
+    ...restaurantPages,
+    ...salonPages,
     ...usGuidePages,
     ...ukStaticPages,
     ...ukDocPages,

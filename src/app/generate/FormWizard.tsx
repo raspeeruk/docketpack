@@ -3,22 +3,25 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { usDocuments } from "@/data/us-documents";
-import { industries } from "@/data/industries";
+import { usSalonDocuments } from "@/data/us-salon-documents";
+import { industries, type IndustryField } from "@/data/industries";
 import { categories } from "@/data/categories";
 import { US_STATES } from "@/data/us-states";
 import { DocumentAccordion } from "@/components/DocumentAccordion";
 
 type Step = 1 | 2 | 3 | 4 | 5;
 
-interface BusinessDetails {
-  businessName: string;
-  businessAddress: string;
-  ownerName: string;
-  employeeCount: string;
-  cuisineType: string;
-  seatingCapacity: string;
-  servesAlcohol: string;
-}
+// Dynamic business details: core fields + industry-specific fields
+type BusinessDetails = Record<string, string>;
+
+const allUSDocuments = [...usDocuments, ...usSalonDocuments];
+
+const CORE_FIELDS = [
+  { key: "businessName", label: "Business name", type: "text" as const, placeholder: "e.g. The Corner Kitchen", required: true },
+  { key: "businessAddress", label: "Business address", type: "text" as const, placeholder: "e.g. 123 Main St, Los Angeles, CA 90001", required: true },
+  { key: "ownerName", label: "Owner / responsible person", type: "text" as const, placeholder: "e.g. John Smith", required: true },
+  { key: "employeeCount", label: "Number of employees", type: "number" as const, placeholder: "e.g. 15", required: true },
+];
 
 interface GeneratedDoc {
   slug: string;
@@ -47,9 +50,6 @@ export function USFormWizard() {
     businessAddress: "",
     ownerName: "",
     employeeCount: "",
-    cuisineType: "",
-    seatingCapacity: "",
-    servesAlcohol: "Yes",
   });
   const [selectedDocs, setSelectedDocs] = useState<Set<string>>(new Set());
   const [selectAll, setSelectAll] = useState(false);
@@ -64,7 +64,7 @@ export function USFormWizard() {
     setGenerating(true);
     const docList = Array.from(docs).map((slug) => ({
       slug,
-      name: usDocuments.find((d) => d.slug === slug)?.name || slug,
+      name: allUSDocuments.find((d) => d.slug === slug)?.name || slug,
       content: "",
       status: "pending" as const,
     }));
@@ -125,9 +125,6 @@ export function USFormWizard() {
             businessAddress: "",
             ownerName: "",
             employeeCount: "",
-            cuisineType: "",
-            seatingCapacity: "",
-            servesAlcohol: "Yes",
           });
           setSelectedDocs(restoredDocs);
           setStep(5);
@@ -156,16 +153,20 @@ export function USFormWizard() {
     }
   }, [searchParams, handleGenerate]);
 
-  // Get available docs based on selected state
+  // Get current industry definition
+  const currentIndustry = industries.find((i) => i.slug === selectedIndustry);
+  const industryFields: IndustryField[] = currentIndustry?.fields || [];
+
+  // Get available docs based on selected state and industry
   const getAvailableDocs = () => {
     if (selectedState) {
-      return usDocuments.filter(
+      return allUSDocuments.filter(
         (d) =>
           d.industry === selectedIndustry &&
           (d.state === null || d.state === selectedState)
       );
     }
-    return usDocuments.filter(
+    return allUSDocuments.filter(
       (d) => d.industry === selectedIndustry && d.state === null
     );
   };
@@ -255,12 +256,13 @@ export function USFormWizard() {
   // Stripe checkout — temporarily disabled for testing
   // const handleCheckout = async () => { ... };
 
+  // Validate core fields + required industry-specific fields
   const isStep3Valid =
-    businessDetails.businessName.trim() !== "" &&
-    businessDetails.businessAddress.trim() !== "" &&
-    businessDetails.ownerName.trim() !== "" &&
-    businessDetails.employeeCount.trim() !== "" &&
-    businessDetails.seatingCapacity.trim() !== "";
+    (businessDetails.businessName || "").trim() !== "" &&
+    (businessDetails.businessAddress || "").trim() !== "" &&
+    (businessDetails.ownerName || "").trim() !== "" &&
+    (businessDetails.employeeCount || "").trim() !== "" &&
+    industryFields.filter((f) => f.required).every((f) => (businessDetails[f.key] || "").trim() !== "");
 
   const stateName = US_STATES.find((s) => s.slug === selectedState)?.name;
 
@@ -423,14 +425,8 @@ export function USFormWizard() {
             {stateName && ` Documents will reference ${stateName} state regulations.`}
           </p>
           <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
-            {[
-              { key: "businessName", label: "Business name", placeholder: "e.g. The Corner Kitchen", type: "text" },
-              { key: "businessAddress", label: "Business address", placeholder: "e.g. 123 Main St, Los Angeles, CA 90001", type: "text" },
-              { key: "ownerName", label: "Owner / responsible person", placeholder: "e.g. John Smith", type: "text" },
-              { key: "employeeCount", label: "Number of employees", placeholder: "e.g. 15", type: "number" },
-              { key: "cuisineType", label: "Cuisine type", placeholder: "e.g. American, Mexican, Italian", type: "text" },
-              { key: "seatingCapacity", label: "Seating capacity", placeholder: "e.g. 80", type: "number" },
-            ].map((field) => (
+            {/* Core fields (same for all industries) */}
+            {CORE_FIELDS.map((field) => (
               <div key={field.key}>
                 <label className="block font-mono text-xs font-bold tracking-wider text-graphite uppercase">
                   {field.label}
@@ -438,7 +434,7 @@ export function USFormWizard() {
                 <input
                   type={field.type}
                   placeholder={field.placeholder}
-                  value={businessDetails[field.key as keyof BusinessDetails]}
+                  value={businessDetails[field.key] || ""}
                   onChange={(e) =>
                     setBusinessDetails((prev) => ({
                       ...prev,
@@ -449,24 +445,45 @@ export function USFormWizard() {
                 />
               </div>
             ))}
-            <div>
-              <label className="block font-mono text-xs font-bold tracking-wider text-graphite uppercase">
-                Serves alcohol
-              </label>
-              <select
-                value={businessDetails.servesAlcohol}
-                onChange={(e) =>
-                  setBusinessDetails((prev) => ({
-                    ...prev,
-                    servesAlcohol: e.target.value,
-                  }))
-                }
-                className="mt-2 w-full border border-fold bg-cotton px-4 py-3 font-body text-sm text-walnut focus:border-walnut focus:outline-none"
-              >
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-              </select>
-            </div>
+
+            {/* Industry-specific fields (from industries.ts) */}
+            {industryFields.map((field) => (
+              <div key={field.key}>
+                <label className="block font-mono text-xs font-bold tracking-wider text-graphite uppercase">
+                  {field.label}
+                  {!field.required && <span className="text-graphite/40 normal-case"> (optional)</span>}
+                </label>
+                {field.type === "select" && field.options ? (
+                  <select
+                    value={businessDetails[field.key] || field.options[0] || ""}
+                    onChange={(e) =>
+                      setBusinessDetails((prev) => ({
+                        ...prev,
+                        [field.key]: e.target.value,
+                      }))
+                    }
+                    className="mt-2 w-full border border-fold bg-cotton px-4 py-3 font-body text-sm text-walnut focus:border-walnut focus:outline-none"
+                  >
+                    {field.options.map((opt) => (
+                      <option key={opt} value={opt}>{opt}</option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    type={field.type}
+                    placeholder={field.placeholder}
+                    value={businessDetails[field.key] || ""}
+                    onChange={(e) =>
+                      setBusinessDetails((prev) => ({
+                        ...prev,
+                        [field.key]: e.target.value,
+                      }))
+                    }
+                    className="mt-2 w-full border border-fold bg-cotton px-4 py-3 font-body text-sm text-walnut placeholder:text-graphite/50 focus:border-walnut focus:outline-none"
+                  />
+                )}
+              </div>
+            ))}
           </div>
           <div className="mt-8 flex gap-4">
             <button
@@ -629,7 +646,7 @@ export function USFormWizard() {
               ? generatedDocs
               : Array.from(selectedDocs).map((slug) => ({
                   slug,
-                  name: usDocuments.find((d) => d.slug === slug)?.name || slug,
+                  name: allUSDocuments.find((d) => d.slug === slug)?.name || slug,
                   content: "",
                   status: "pending" as const,
                 }))

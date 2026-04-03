@@ -31,7 +31,7 @@ export default function HomePage() {
               href="/restaurant/"
               className="border-2 border-walnut px-8 py-4 font-body text-base font-medium text-walnut transition-colors hover:bg-manila"
             >
-              Browse Document Library
+              Browse All Industries
             </Link>
           </div>
         </div>

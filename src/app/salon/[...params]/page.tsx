@@ -9,34 +9,33 @@ import {
   getUSStateDocuments,
   getAllUSDocumentsForState,
   getCategoryBySlug,
-  getCategoriesForRegion,
-  getDocumentsByRegionAndCategory,
 } from "@/lib/data";
 import { US_STATE_SLUGS, getStateBySlug, US_STATES } from "@/data/us-states";
 
+const INDUSTRY = "salon";
+const INDUSTRY_LABEL = "Salon & Barbershop";
+
+// States with salon-specific docs
+const SALON_STATE_SLUGS = new Set(["california", "texas", "florida", "new-york"]);
+
 /**
- * Catch-all route for US restaurant pages:
- *   /restaurant/[slug]           → federal doc detail (if slug NOT in US_STATE_SLUGS)
- *   /restaurant/[state]          → state overview (if slug IS in US_STATE_SLUGS)
- *   /restaurant/[state]/[slug]   → state doc detail
+ * Catch-all route for US salon pages:
+ *   /salon/[slug]           → federal doc detail
+ *   /salon/[state]          → state overview
+ *   /salon/[state]/[slug]   → state doc detail
  */
 
 export function generateStaticParams() {
   const params: { params: string[] }[] = [];
 
-  // Federal doc pages: /restaurant/[slug]
-  for (const doc of getUSFederalDocuments("restaurant")) {
+  for (const doc of getUSFederalDocuments(INDUSTRY)) {
     params.push({ params: [doc.slug] });
   }
 
-  // State overview pages: /restaurant/[state]
   for (const state of US_STATES) {
+    if (!SALON_STATE_SLUGS.has(state.slug)) continue;
     params.push({ params: [state.slug] });
-  }
-
-  // State doc pages: /restaurant/[state]/[slug]
-  for (const state of US_STATES) {
-    for (const doc of getUSStateDocuments(state.slug, "restaurant")) {
+    for (const doc of getUSStateDocuments(state.slug, INDUSTRY)) {
       params.push({ params: [state.slug, doc.slug] });
     }
   }
@@ -52,11 +51,11 @@ type PageType =
 function resolveParams(segments: string[]): PageType | null {
   if (segments.length === 1) {
     const [first] = segments;
-    if (US_STATE_SLUGS.has(first)) {
+    if (SALON_STATE_SLUGS.has(first)) {
       return { kind: "state-overview", stateSlug: first };
     }
     const doc = getDocumentBySlug(first);
-    if (doc && doc.region === "us" && doc.state === null) {
+    if (doc && doc.region === "us" && doc.state === null && doc.industry === INDUSTRY) {
       return { kind: "federal-doc", doc };
     }
     return null;
@@ -64,9 +63,9 @@ function resolveParams(segments: string[]): PageType | null {
 
   if (segments.length === 2) {
     const [stateSlug, docSlug] = segments;
-    if (!US_STATE_SLUGS.has(stateSlug)) return null;
+    if (!SALON_STATE_SLUGS.has(stateSlug)) return null;
     const doc = getDocumentBySlug(docSlug);
-    if (doc && doc.region === "us" && doc.state === stateSlug) {
+    if (doc && doc.region === "us" && doc.state === stateSlug && doc.industry === INDUSTRY) {
       return { kind: "state-doc", stateSlug, doc };
     }
     return null;
@@ -92,16 +91,15 @@ export async function generateMetadata({
     };
   }
 
-  // state-overview
   const state = getStateBySlug(resolved.stateSlug);
   if (!state) return { title: "Not Found" };
   return {
-    title: `${state.name} Restaurant Documents — State Compliance Requirements`,
-    description: `Every compliance document your ${state.name} restaurant needs. State-specific regulations plus federal requirements. Minimum wage ${state.minWage}, food handler certification, liquor licensing, and more.`,
+    title: `${state.name} ${INDUSTRY_LABEL} Documents — State Compliance Requirements`,
+    description: `Every compliance document your ${state.name} salon or barbershop needs. Cosmetology board licensing, sanitation standards, and labor law compliance.`,
   };
 }
 
-export default async function USRestaurantCatchAll({
+export default async function USSalonCatchAll({
   params,
 }: {
   params: Promise<{ params: string[] }>;
@@ -123,9 +121,9 @@ function StateOverview({ stateSlug }: { stateSlug: string }) {
   const state = getStateBySlug(stateSlug);
   if (!state) notFound();
 
-  const stateDocs = getUSStateDocuments(stateSlug, "restaurant");
-  const federalDocs = getUSFederalDocuments("restaurant");
-  const allDocs = getAllUSDocumentsForState(stateSlug, "restaurant");
+  const stateDocs = getUSStateDocuments(stateSlug, INDUSTRY);
+  const federalDocs = getUSFederalDocuments(INDUSTRY);
+  const allDocs = getAllUSDocumentsForState(stateSlug, INDUSTRY);
 
   return (
     <>
@@ -137,14 +135,14 @@ function StateOverview({ stateSlug }: { stateSlug: string }) {
             </span>
           </div>
           <h1 className="font-heading text-4xl text-walnut md:text-5xl lg:text-6xl">
-            {state.name} Restaurant Documents
+            {state.name} {INDUSTRY_LABEL} Documents
           </h1>
           <p className="mt-4 max-w-2xl font-body text-base font-light text-graphite leading-relaxed">
             {stateDocs.length} state-specific documents plus {federalDocs.length} federal
-            requirements. Everything your {state.name} restaurant needs for full compliance.
+            requirements. Everything your {state.name} salon needs for full compliance.
           </p>
           <div className="mt-8">
-            <RubberStampCTA href={`/generate/?industry=restaurant&state=${stateSlug}`} size="large">
+            <RubberStampCTA href={`/generate/?industry=${INDUSTRY}&state=${stateSlug}`} size="large">
               Generate All {allDocs.length} Documents — $79
             </RubberStampCTA>
           </div>
@@ -161,7 +159,7 @@ function StateOverview({ stateSlug }: { stateSlug: string }) {
             {[
               { label: "Minimum Wage", value: state.minWage },
               { label: "Tipped Wage", value: state.tippedWage },
-              { label: "Restaurants", value: state.restaurantCount },
+              { label: "Workers' Comp", value: state.workersComp.split(";")[0] },
               { label: "Health Dept", value: state.healthDept },
             ].map((item) => (
               <div key={item.label} className="border border-fold bg-cotton p-4">
@@ -184,13 +182,13 @@ function StateOverview({ stateSlug }: { stateSlug: string }) {
             {state.name} State Documents
           </h2>
           <p className="mt-2 font-body text-sm font-light text-graphite">
-            Documents specific to {state.name} state regulations.
+            Documents specific to {state.name} cosmetology board and state regulations.
           </p>
           <div className="mt-8 grid grid-cols-1 gap-3 md:grid-cols-2">
             {stateDocs.map((doc) => (
               <Link
                 key={doc.slug}
-                href={`/restaurant/${stateSlug}/${doc.slug}/`}
+                href={`/salon/${stateSlug}/${doc.slug}/`}
                 className="group block border border-fold bg-manila/40 p-6 transition-colors hover:bg-manila/70"
               >
                 <div className="flex flex-wrap items-center gap-2">
@@ -220,13 +218,13 @@ function StateOverview({ stateSlug }: { stateSlug: string }) {
             Federal Requirements
           </h2>
           <p className="mt-2 font-body text-sm font-light text-graphite">
-            These federal documents also apply to your {state.name} restaurant.
+            These federal documents also apply to your {state.name} salon.
           </p>
           <div className="mt-8 grid grid-cols-1 gap-3 md:grid-cols-2">
             {federalDocs.map((doc) => (
               <Link
                 key={doc.slug}
-                href={`/restaurant/${doc.slug}/`}
+                href={`/salon/${doc.slug}/`}
                 className="group block border border-fold bg-manila/40 p-6 transition-colors hover:bg-manila/70"
               >
                 <div className="flex flex-wrap items-center gap-2">
@@ -258,7 +256,7 @@ function StateOverview({ stateSlug }: { stateSlug: string }) {
             All {allDocs.length} {state.name} documents. Ready in minutes.
           </h2>
           <div className="mt-8">
-            <RubberStampCTA href={`/generate/?industry=restaurant&state=${stateSlug}`} size="large">
+            <RubberStampCTA href={`/generate/?industry=${INDUSTRY}&state=${stateSlug}`} size="large">
               Generate Your {state.name} Pack — $79
             </RubberStampCTA>
           </div>
@@ -284,11 +282,11 @@ function DocumentDetail({
     .filter(Boolean);
 
   const generateHref = stateSlug
-    ? `/generate/?docs=${doc.slug}&state=${stateSlug}`
-    : `/generate/?docs=${doc.slug}`;
+    ? `/generate/?docs=${doc.slug}&state=${stateSlug}&industry=${INDUSTRY}`
+    : `/generate/?docs=${doc.slug}&industry=${INDUSTRY}`;
   const packHref = stateSlug
-    ? `/generate/?industry=restaurant&state=${stateSlug}`
-    : "/generate/?industry=restaurant";
+    ? `/generate/?industry=${INDUSTRY}&state=${stateSlug}`
+    : `/generate/?industry=${INDUSTRY}`;
 
   return (
     <>
@@ -316,7 +314,7 @@ function DocumentDetail({
           <p className="mt-3 font-mono text-sm tracking-wide text-graphite">
             {state
               ? `Required in ${state.name} — additional to federal requirements`
-              : "Applies to all US restaurants regardless of state"}
+              : "Applies to all US salons and barbershops regardless of state"}
           </p>
           <h1 className="mt-4 font-heading text-4xl text-walnut md:text-5xl">
             {doc.name}
@@ -418,8 +416,8 @@ function DocumentDetail({
                   <ul className="mt-4 space-y-2">
                     {relatedDocs.map((rd) => {
                       const rdUrl = rd!.state
-                        ? `/restaurant/${rd!.state}/${rd!.slug}/`
-                        : `/restaurant/${rd!.slug}/`;
+                        ? `/salon/${rd!.state}/${rd!.slug}/`
+                        : `/salon/${rd!.slug}/`;
                       return (
                         <li key={rd!.slug}>
                           <Link
@@ -449,10 +447,8 @@ function DocumentDetail({
             Here&apos;s what your generated {doc.name} looks like. Each document is customized with your business details.
           </p>
 
-          {/* Paper mock */}
           <div className="mt-8 mx-auto max-w-2xl">
             <div className="relative border border-fold bg-white shadow-lg overflow-hidden" style={{ aspectRatio: "8.5/11" }}>
-              {/* SAMPLE watermark */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
                 <span
                   className="font-heading text-8xl font-bold text-burgundy/10 select-none md:text-9xl"
@@ -462,9 +458,7 @@ function DocumentDetail({
                 </span>
               </div>
 
-              {/* Page content */}
               <div className="relative z-0 px-10 py-10 md:px-14 md:py-12">
-                {/* Header */}
                 <div className="border-b-2 border-walnut pb-4">
                   <p className="font-mono text-[10px] tracking-widest text-graphite uppercase">
                     DocketPack &mdash; Generated Document
@@ -478,7 +472,6 @@ function DocumentDetail({
                   </div>
                 </div>
 
-                {/* Simulated document body */}
                 <div className="mt-6 space-y-5">
                   <div>
                     <p className="font-mono text-[10px] tracking-wider text-graphite uppercase">
@@ -510,7 +503,6 @@ function DocumentDetail({
                   )}
                 </div>
 
-                {/* Footer */}
                 <div className="absolute bottom-8 left-10 right-10 md:left-14 md:right-14 border-t border-fold pt-3 flex justify-between">
                   <p className="font-mono text-[9px] text-graphite/60">
                     Generated by DocketPack &mdash; Review with a qualified professional before use

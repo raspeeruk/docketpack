@@ -41,7 +41,13 @@ export function Nav() {
               href="/restaurant/"
               className="text-graphite transition-colors hover:text-walnut"
             >
-              US Docs
+              Restaurants
+            </Link>
+            <Link
+              href="/salon/"
+              className="text-graphite transition-colors hover:text-walnut"
+            >
+              Salons
             </Link>
             <Link
               href="/uk/restaurant/"

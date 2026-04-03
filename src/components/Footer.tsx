@@ -26,6 +26,11 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/salon/" className="hover:text-cotton">
+                  Salon & Barbershop Documents
+                </Link>
+              </li>
+              <li>
                 <Link href="/pricing/" className="hover:text-cotton">
                   Pricing ($79/$9)
                 </Link>
