@@ -223,6 +223,35 @@ export function USFormWizard() {
     }
   };
 
+  const handleDownloadWord = async () => {
+    const docsToExport = generatedDocs
+      .filter((d) => d.status === "done")
+      .map((d) => ({ name: d.name, content: d.content }));
+
+    try {
+      const res = await fetch("/api/export/docx/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          documents: docsToExport,
+          businessName: businessDetails.businessName,
+        }),
+      });
+
+      if (!res.ok) return;
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${businessDetails.businessName.replace(/\s+/g, "-").toLowerCase()}-us-documents.docx`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      // Word download failed
+    }
+  };
+
   // Stripe checkout — temporarily disabled for testing
   // const handleCheckout = async () => { ... };
 
@@ -637,6 +666,12 @@ export function USFormWizard() {
                 className="bg-burgundy px-8 py-4 font-body text-base font-medium text-cotton transition-colors hover:bg-burgundy-hover"
               >
                 Download PDF
+              </button>
+              <button
+                onClick={handleDownloadWord}
+                className="border-2 border-walnut px-8 py-4 font-body text-base font-medium text-walnut transition-colors hover:bg-manila"
+              >
+                Download Word
               </button>
             </div>
           )}

@@ -62,6 +62,12 @@ export function Nav() {
               Guides
             </Link>
             <Link
+              href="/request/"
+              className="text-graphite transition-colors hover:text-walnut"
+            >
+              Request
+            </Link>
+            <Link
               href="/generate/"
               className="bg-burgundy px-5 py-2.5 font-body text-sm font-medium text-cotton transition-colors hover:bg-burgundy-hover"
             >

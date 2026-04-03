@@ -14,6 +14,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/about/`, changeFrequency: "monthly" as const, priority: 0.4 },
     { url: `${BASE}/privacy/`, changeFrequency: "monthly" as const, priority: 0.2 },
     { url: `${BASE}/terms/`, changeFrequency: "monthly" as const, priority: 0.2 },
+    { url: `${BASE}/request/`, changeFrequency: "monthly" as const, priority: 0.5 },
   ];
 
   // ── US pages ────────────────────────────────────────────────
