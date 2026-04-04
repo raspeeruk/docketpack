@@ -4,13 +4,25 @@ import { industries, type Industry } from "@/data/industries";
 import { guides, type Guide } from "@/data/guides";
 import { usDocuments } from "@/data/us-documents";
 import { usSalonDocuments } from "@/data/us-salon-documents";
+import { usGymDocuments } from "@/data/us-gym-documents";
+import { usFoodtruckDocuments } from "@/data/us-foodtruck-documents";
+import { usRetailDocuments } from "@/data/us-retail-documents";
+import { usTattooDocuments } from "@/data/us-tattoo-documents";
 import { usGuides } from "@/data/us-guides";
 import { US_STATES, US_STATE_SLUGS, getStateBySlug } from "@/data/us-states";
 export type { USState } from "@/data/us-states";
 
 // ── All documents (UK + US combined) ────────────────────────────
 
-const allDocuments: Document[] = [...documents, ...usDocuments, ...usSalonDocuments];
+const allDocuments: Document[] = [
+  ...documents,
+  ...usDocuments,
+  ...usSalonDocuments,
+  ...usGymDocuments,
+  ...usFoodtruckDocuments,
+  ...usRetailDocuments,
+  ...usTattooDocuments,
+];
 
 // ── Documents ───────────────────────────────────────────────────
 

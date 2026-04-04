@@ -22,22 +22,37 @@ export function Footer() {
             <ul className="mt-4 space-y-2 font-body text-sm">
               <li>
                 <Link href="/restaurant/" className="hover:text-cotton">
-                  Restaurant Documents
+                  Restaurant
                 </Link>
               </li>
               <li>
                 <Link href="/salon/" className="hover:text-cotton">
-                  Salon & Barbershop Documents
+                  Salon & Barbershop
+                </Link>
+              </li>
+              <li>
+                <Link href="/gym/" className="hover:text-cotton">
+                  Gym & Fitness
+                </Link>
+              </li>
+              <li>
+                <Link href="/food-truck/" className="hover:text-cotton">
+                  Food Truck
+                </Link>
+              </li>
+              <li>
+                <Link href="/retail/" className="hover:text-cotton">
+                  Retail Shop
+                </Link>
+              </li>
+              <li>
+                <Link href="/tattoo/" className="hover:text-cotton">
+                  Tattoo & Piercing
                 </Link>
               </li>
               <li>
                 <Link href="/pricing/" className="hover:text-cotton">
                   Pricing ($79/$9)
-                </Link>
-              </li>
-              <li>
-                <Link href="/guides/" className="hover:text-cotton">
-                  Guides
                 </Link>
               </li>
               <li>

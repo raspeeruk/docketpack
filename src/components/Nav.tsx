@@ -37,18 +37,19 @@ export function Nav() {
             </div>
           </Link>
           <nav className="hidden items-center gap-6 font-body text-sm font-medium md:flex">
-            <Link
-              href="/restaurant/"
-              className="text-graphite transition-colors hover:text-walnut"
-            >
-              Restaurants
-            </Link>
-            <Link
-              href="/salon/"
-              className="text-graphite transition-colors hover:text-walnut"
-            >
-              Salons
-            </Link>
+            <div className="group relative">
+              <button className="text-graphite transition-colors hover:text-walnut">
+                Industries
+              </button>
+              <div className="invisible absolute left-0 top-full z-50 mt-1 w-56 border-2 border-walnut bg-cotton opacity-0 shadow-lg transition-all group-hover:visible group-hover:opacity-100">
+                <Link href="/restaurant/" className="block px-4 py-3 text-graphite transition-colors hover:bg-manila hover:text-walnut">Restaurant</Link>
+                <Link href="/salon/" className="block px-4 py-3 text-graphite transition-colors hover:bg-manila hover:text-walnut">Salon & Barbershop</Link>
+                <Link href="/gym/" className="block px-4 py-3 text-graphite transition-colors hover:bg-manila hover:text-walnut">Gym & Fitness</Link>
+                <Link href="/food-truck/" className="block px-4 py-3 text-graphite transition-colors hover:bg-manila hover:text-walnut">Food Truck</Link>
+                <Link href="/retail/" className="block px-4 py-3 text-graphite transition-colors hover:bg-manila hover:text-walnut">Retail Shop</Link>
+                <Link href="/tattoo/" className="block px-4 py-3 text-graphite transition-colors hover:bg-manila hover:text-walnut">Tattoo & Piercing</Link>
+              </div>
+            </div>
             <Link
               href="/uk/restaurant/"
               className="text-graphite transition-colors hover:text-walnut"

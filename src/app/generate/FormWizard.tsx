@@ -4,6 +4,10 @@ import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { usDocuments } from "@/data/us-documents";
 import { usSalonDocuments } from "@/data/us-salon-documents";
+import { usGymDocuments } from "@/data/us-gym-documents";
+import { usFoodtruckDocuments } from "@/data/us-foodtruck-documents";
+import { usRetailDocuments } from "@/data/us-retail-documents";
+import { usTattooDocuments } from "@/data/us-tattoo-documents";
 import { industries, type IndustryField } from "@/data/industries";
 import { categories } from "@/data/categories";
 import { US_STATES } from "@/data/us-states";
@@ -14,7 +18,14 @@ type Step = 1 | 2 | 3 | 4 | 5;
 // Dynamic business details: core fields + industry-specific fields
 type BusinessDetails = Record<string, string>;
 
-const allUSDocuments = [...usDocuments, ...usSalonDocuments];
+const allUSDocuments = [
+  ...usDocuments,
+  ...usSalonDocuments,
+  ...usGymDocuments,
+  ...usFoodtruckDocuments,
+  ...usRetailDocuments,
+  ...usTattooDocuments,
+];
 
 const CORE_FIELDS = [
   { key: "businessName", label: "Business name", type: "text" as const, placeholder: "e.g. The Corner Kitchen", required: true },
