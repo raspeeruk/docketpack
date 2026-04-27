@@ -98,6 +98,9 @@ export function Footer() {
                 <Link href="/about/" className="hover:text-cotton">About</Link>
               </li>
               <li>
+                <Link href="/contact/" className="hover:text-cotton">Contact</Link>
+              </li>
+              <li>
                 <Link href="/privacy/" className="hover:text-cotton">Privacy Policy</Link>
               </li>
               <li>
